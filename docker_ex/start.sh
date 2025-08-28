@@ -1,0 +1,1 @@
+sudo docker run -it auth_ex:latest
