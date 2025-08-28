@@ -21,4 +21,10 @@ user: "jurek"
 
 ## Connect
 
+Podmień wygenerowany IP (z Dockera) w pliku .ovpn na IP hosta.
+Na przykład:
+remote 192.168.100.3 1194
+
+Nasyępnie:
 openpvn jurek.ovpn
+
