@@ -8,44 +8,50 @@ engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 async def create():
-    dm = DataManager()
     async with AsyncSessionLocal() as session:
-        await dm.create(session)
+        dm = DataManager(session)
+        await dm.create()
 
 async def demo():
-    dm = DataManager()
+
     async with AsyncSessionLocal() as session:
-        address_id = await dm.add_address(country='Poland', session=session)
-        await dm.add_user('demo', 'demo', name='John Down', email='jd@example.com', address_id=address_id, session=session)
-        await dm.add_client(ident='demoapp', secret='secret', system_user_id=1, auth_redirect_uri='http://127.0.0.1:3000', session=session)
+        dm = DataManager(session)
+        address_id = await dm.add_address(country='Poland')
+        await dm.add_user('demo', 'demo', name='John Down', email='jd@example.com')
+        #, address_id=address_id)
+        await dm.add_client(ident='demoapp', secret='secret', system_user_id=1, auth_redirect_uri='http://127.0.0.1:3000')
 
 async def test():
-    dm = DataManager()
+
     async with AsyncSessionLocal() as session:
-        user_id = await dm.check_user('demo', 'demo', session)
-        client = await dm.get_client(1, session)
+        dm = DataManager(session)
+        user_id = await dm.check_user('demo', 'demo')
+        client = await dm.get_client(1)
         print(f"User ID: {user_id}")
         print(f"Client: {client}")
 
 async def uuid(id: int):
-    dm = DataManager()
+
     async with AsyncSessionLocal() as session:
-        client = await dm.get_client(id, session)
+        dm = DataManager(session)
+        client = await dm.get_client(id)
         if client:
             print(client.uuid)
         else:
             print("Not found")
 
 async def user(ident: str, secret: str, email: str):
-    dm = DataManager()
+
     async with AsyncSessionLocal() as session:
-        user_id = await dm.add_user(ident, secret, email=email, session=session)
+        dm = DataManager(session)
+        user_id = await dm.add_user(ident, secret, email=email)
         print(f"User {ident} added with ID {user_id}")
 
 async def client(ident: str, secret: str, uri: str, user_id: int = 1):
-    dm = DataManager()
+
     async with AsyncSessionLocal() as session:
-        client_id = await dm.add_client(ident, secret, user_id, uri, session=session)
+        dm = DataManager(session)
+        client_id = await dm.add_client(ident, secret, user_id, uri)
         print(f"Client {ident} added with ID {client_id}")
 
 if __name__ == "__main__":

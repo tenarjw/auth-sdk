@@ -5,6 +5,10 @@ from pydantic import BaseModel, Field, validator
 import time
 
 
+class ResponseMessage(BaseModel):
+    code: Optional[int] = 0
+    message: str
+
 class Introspection(BaseModel):
     active: Optional[bool] = None
     client_id: Optional[str] = None

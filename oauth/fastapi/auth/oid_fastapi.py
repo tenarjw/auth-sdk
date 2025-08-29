@@ -1,7 +1,7 @@
 # oid_fastapi.py
 from urllib import request
 
-from fastapi import FastAPI, Depends, APIRouter, Query, Request, Form
+from fastapi import Depends, APIRouter, Query, Request, Form
 from fastapi.responses import RedirectResponse
 from typing import Optional, Dict
 from urllib.parse import urlencode
@@ -15,6 +15,12 @@ from .oid_token import api_token_create, api_token_decode, HTTPException, jwt_de
 from .oid_core import validator, OAuthException
 from .oid_core import time_to_now, OAuth2RequestForm, LOGIN_TIMEOUT, \
     handle_oauth_authorize, handle_grant_type_authorization_code
+
+from fastapi import HTTPException
+
+from .oid_core import OAuth2RequestForm
+from .oid_token import api_token_create, get_refresh_token_payload, OAuthException
+
 from .oid_types import Introspection, ResponseType
 
 router = APIRouter(
@@ -32,9 +38,9 @@ async def post_token(*,
     """
     Authorization code grant / Client Credentials
     """
-    dm = DataManager()
+    dm = DataManager(db)
     if form_data.grant_type == 'client_credentials':
-        client = await dm.get_client_uuid(form_data.client_id, session=db)
+        client = await dm.get_client_uuid(form_data.client_id)
         if not client:
             raise HTTPException(status_code=400, detail="Incorrect client id")
         if client.secret != form_data.client_secret:
@@ -50,13 +56,14 @@ async def post_token(*,
                 'code param is missing',
                 OAuthException.INVALID_REQUEST,
             )
-        (client_id, redirect_uri, client_secret, code, scope) = validator.check_grant_type_authorization_form(form_data)
-        return handle_grant_type_authorization_code(client_id, redirect_uri, code, scope, form_data)
+        (client_id, redirect_uri, client_secret, code, scope) = await validator.check_grant_type_authorization_form(dm,form_data)
+        # todo: host_url?
+        return await handle_grant_type_authorization_code(dm,'',client_id, redirect_uri, code, scope, form_data)
     else:
         raise HTTPException(status_code=400, detail="Not implemented yet")
 
 @router.get('/authorize', response_model=None)
-def get_authorize(
+async def get_authorize(
     request: Request = None,
     client_id: str = ...,
     redirect_uri: Optional[str] = Query(description="""Adres przekierowania po uwierzytelnieniu.
@@ -78,9 +85,10 @@ def get_authorize(
     """
     #Authorisation
     """
+    dm = DataManager(db)
     args = dict(request.query_params)
     (response_type, client_id, redirect_uri, scopes, state,
-     response_mode, code_challenge, code_challenge_method) = validator.validate_oauth_params(args)
+         response_mode, code_challenge, code_challenge_method) = validator.validate_oauth_params(dm,args)
     response_mode = validator.valid_response_mode(args.get('response_mode'), response_type)
     if response_type == 'code':  # authorization code grant
         #fast api / flask
@@ -94,7 +102,7 @@ def get_authorize(
             )
     else:
         user_id = 0
-    response_params = handle_oauth_authorize(response_type, user_id, client_id,
+    response_params = await handle_oauth_authorize(dm, response_type, user_id, client_id,
                                              redirect_uri, scopes, state,
                                              code_challenge=code_challenge, code_challenge_method=code_challenge_method)
     if 'error' in response_params:
@@ -118,14 +126,14 @@ async def post_introspect(
     """
     """
     try:
-        dm = DataManager()
+        dm = DataManager(db)
         scope_list, user_id, client_id = api_token_decode(token)
         payload = jwt_decode(token, jwk_context.get_rsa_key())
         base_url = str(request.base_url)
         return Introspection(
             active=True,
             client_id=client_id,
-            username=await dm.ext_user_id(user_id,session=db) if user_id else None,
+            username=await dm.ext_user_id(user_id) if user_id else None,
             scope=' '.join(scope_list),
             sub=str(user_id) if user_id else None,
             aud=client_id,
@@ -157,6 +165,68 @@ def post_revoke_class(
     """
     raise HTTPException(status_code=400, detail="Not implemented yet")
 
+
+
+@router.post("/refresh", response_model=None)
+async def post_refresh(
+    form_data: OAuth2RequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+) -> Dict:
+    """
+    Refresh Token Grant
+    """
+    dm = DataManager(db)
+
+    if form_data.grant_type != 'refresh_token':
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid grant type. Expected 'refresh_token'."
+        )
+
+    if not form_data.refresh_token:
+        raise HTTPException(
+            status_code=400,
+            detail="Missing 'refresh_token' parameter."
+        )
+
+    try:
+        # Dekoduj refresh token, aby uzyskać dane użytkownika i klienta
+        payload = get_refresh_token_payload(form_data.refresh_token)
+        user_id = payload.get('sub')
+        client_id_uuid = payload.get('aud')
+        scopes = payload.get('scope')
+
+        if not user_id or not client_id_uuid or not scopes:
+            raise OAuthException("Invalid refresh token payload.")
+
+        # Upewnij się, że klient wciąż istnieje i ma odpowiednie uprawnienia
+        client = await dm.get_client_uuid(client_id_uuid)
+        if not client:
+            raise OAuthException("Client not found.")
+
+        # Opcjonalnie: można dodać weryfikację, czy user_id jest wciąż aktywny
+
+        # Wygeneruj nowy access token
+        access_token = api_token_create(client_id_uuid, user_id, scopes)
+
+        return {
+            "access_token": access_token,
+            "token_type": "Bearer",
+            "expires_in": 3600, # Czas ważności tokenu w sekundach
+            # Opcjonalnie: wygeneruj nowy refresh token i unieważnij stary
+            # "refresh_token": new_refresh_token
+        }
+    except OAuthException as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid refresh token: {e}"
+        )
+    except Exception as e:
+        # Obsługa innych, nieoczekiwanych błędów
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error: {e}"
+        )
 
 #/.well-known/openid-configuration
 @router.get('/.well-known/openid-configuration', response_model=None)

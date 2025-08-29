@@ -2,9 +2,13 @@
 import json
 import time
 import logging
+from typing import Dict
+
 from jwcrypto import jwt
 from jwcrypto.common import JWException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from jwcrypto.jws import JWS
 
 try:
     import flask
@@ -19,7 +23,7 @@ else:
     except ImportError:
         starlette = None
 
-from .context import jwk_context, db_context
+from .context import jwk_context, DataManager
 
 if starlette is None:
     HTTP_401_UNAUTHORIZED = 401
@@ -92,8 +96,8 @@ def create_id_token(host_url, user_id, client_id, extra_claims):
     return jwt_encode(claims, key)
 
 
-def access_token_retrieve_or_create(app_id, user_id=0, scope='', host_url='', autorenew=True):
-    tk = db_context.get_access_token(app_id, user_id)
+async def access_token_retrieve_or_create( dm : DataManager, app_id, user_id=0, scope='', host_url='', autorenew=True):
+    tk = await dm.get_access_token(app_id, user_id)
     if tk:  # czy aktualny?
         key = jwk_context.get_rsa_key()
         try:
@@ -101,22 +105,22 @@ def access_token_retrieve_or_create(app_id, user_id=0, scope='', host_url='', au
         except JWException:
             if autorenew:
                 token = create_id_token(host_url, user_id, app_id, {'scope': scope})
-                db_context.put_access_token(token, app_id, user_id)
+                await dm.put_access_token(token, app_id, user_id)
         return tk.token
     else:
         token = create_id_token(host_url, user_id, app_id, {'scope': scope})
-        db_context.put_access_token(token, app_id, user_id)
+        await dm.put_access_token(token, app_id, user_id)
         return token
 
 
-async def api_token_create(client_id, user_id, scope, session: AsyncSession):
-    app_id = await db_context.int_client_id(client_id, session)
-    return await access_token_retrieve_or_create(app_id, user_id, scope, session=session)
+async def api_token_create(dm : DataManager, client_id, user_id, scope, session: AsyncSession):
+    app_id = await dm.int_client_id(client_id, session)
+    return await access_token_retrieve_or_create(app_id, user_id, scope)
 
-def api_token_new(client_id, user_id, scope='', host_url=''):
-    app_id = db_context.int_client_id(client_id)
+def api_token_new(dm : DataManager, client_id, user_id, scope='', host_url=''):
+    app_id = dm.int_client_id(client_id)
     token = create_id_token(host_url, user_id, app_id, {'scope': scope})
-    db_context.put_access_token(token, app_id, user_id)
+    dm.put_access_token(token, app_id, user_id)
     return token
 
 def api_token_decode(access_token):
@@ -192,3 +196,17 @@ def api_token_to_owner(token, scopes, scope_str):
         )
     else:
         return (client_ident, user_ident, scope_list)
+
+
+def get_refresh_token_payload(refresh_token: str) -> Dict:
+    """
+    Dekoduje i weryfikuje refresh token, zwracając jego ładunek.
+    """
+    try:
+        jws = JWS()
+        jws.deserialize(refresh_token)
+        # Załóżmy, że klucz do refresh tokena jest taki sam jak dla tokena dostępu
+        jws.verify(jwk_context.get_rsa_key())
+        return json.loads(jws.payload)
+    except Exception as e:
+        raise OAuthException(f"Invalid refresh token: {e}")
