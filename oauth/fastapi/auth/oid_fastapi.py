@@ -19,7 +19,7 @@ from .oid_core import time_to_now, OAuth2RequestForm, LOGIN_TIMEOUT, \
 from fastapi import HTTPException
 
 from .oid_core import OAuth2RequestForm
-from .oid_token import api_token_create, get_refresh_token_payload, OAuthException
+from .oid_token import get_refresh_token_payload, OAuthException
 
 from .oid_types import Introspection, ResponseType
 
@@ -46,7 +46,7 @@ async def post_token(*,
         if client.secret != form_data.client_secret:
             raise HTTPException(status_code=400, detail="Incorrect client/secret")
         try:
-            access_token = api_token_create(client.uuid, 0, client.scopes)
+            access_token = await api_token_create(dm, client.uuid, 0, client.scope)
             return {"access_token": access_token, "token_type": "Bearer", "expires_in": 3600}
         except Exception as e:
             raise HTTPException(status_code=400, detail="Internal error: %s" % e)
@@ -87,7 +87,7 @@ async def get_authorize(
     """
     dm = DataManager(db)
     args = dict(request.query_params)
-    (response_type, client_id, redirect_uri, scopes, state,
+    (response_type, client_id, redirect_uri, scope, state,
          response_mode, code_challenge, code_challenge_method) = validator.validate_oauth_params(dm,args)
     response_mode = validator.valid_response_mode(args.get('response_mode'), response_type)
     if response_type == 'code':  # authorization code grant
@@ -103,7 +103,7 @@ async def get_authorize(
     else:
         user_id = 0
     response_params = await handle_oauth_authorize(dm, response_type, user_id, client_id,
-                                             redirect_uri, scopes, state,
+                                             redirect_uri, scope, state,
                                              code_challenge=code_challenge, code_challenge_method=code_challenge_method)
     if 'error' in response_params:
         # If those are not valid, we must not redirect back to the client
@@ -194,9 +194,9 @@ async def post_refresh(
         payload = get_refresh_token_payload(form_data.refresh_token)
         user_id = payload.get('sub')
         client_id_uuid = payload.get('aud')
-        scopes = payload.get('scope')
+        scope = payload.get('scope')
 
-        if not user_id or not client_id_uuid or not scopes:
+        if not user_id or not client_id_uuid or not scope:
             raise OAuthException("Invalid refresh token payload.")
 
         # Upewnij się, że klient wciąż istnieje i ma odpowiednie uprawnienia
@@ -207,7 +207,7 @@ async def post_refresh(
         # Opcjonalnie: można dodać weryfikację, czy user_id jest wciąż aktywny
 
         # Wygeneruj nowy access token
-        access_token = api_token_create(client_id_uuid, user_id, scopes)
+        access_token = await api_token_create(dm,client_id_uuid, user_id, scope)
 
         return {
             "access_token": access_token,

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Sequence, select, delete, create
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from auth.util import verify_password, hash_password
+import uuid
 import conf
 from dependencies.db import Base # Pamiętaj, że ten import wymaga pliku db.py z odpowiednią bazą
 
@@ -12,7 +13,7 @@ class User(Base):
   id = Column(Integer, Sequence('usr_id_seq'), primary_key=True)
   login = Column(String(30))
   password = Column(String(200))
-  scopes = Column(String(1024))
+  scope = Column(String(1024))
   email = Column(String(50))
   phone_number = Column(String(10))
   name = Column(String(30))
@@ -37,7 +38,7 @@ class Client(Base):
   system_user_id = Column(Integer)
   auth_redirect_uri = Column(String(500))
   uuid = Column(String(40))
-  scopes = Column(String(1024))
+  scope = Column(String(1024))
 
   def __repr__(self):
     return "<Client('%s', '%s')>" % (self.id, self.auth_redirect_uri)
@@ -90,7 +91,7 @@ class DataManager:
     except Exception as e:
       print('DB error [%s]' % e)
 
-  async def add_user(self, login, password, name, email):
+  async def add_user(self, login, password, name, email, scope=''):
     # Haszowanie hasła odbywa się w `auth/util.py`
     hashed_password = hash_password(password)
     new_user = User(
@@ -98,7 +99,7 @@ class DataManager:
       password=hashed_password,
       name=name,
       email=email,
-      scopes="demo_scope"
+      scope=scope
     )
     self.db.add(new_user)
     # Nie robimy tu commit, zaleznosc w fastAPI to zrobi
@@ -168,15 +169,18 @@ class DataManager:
     return new_address.id
 
   async def add_client(self, ident, secret, system_user_id, auth_redirect_uri):
+    u=str(uuid.uuid4())
     new_client = Client(
         ident=ident,
         secret=secret,
         system_user_id=system_user_id,
-        auth_redirect_uri=auth_redirect_uri
+        auth_redirect_uri=auth_redirect_uri,
+        uuid=u
     )
     self.db.add(new_client)
     await self.db.flush()  # Wykonanie flush asynchronicznie
     await self.db.commit()  # Zatwierdzenie zmian w bazie danych
+    return u
 
   async def get_client(self, client_id):
     try:
@@ -186,9 +190,9 @@ class DataManager:
       print(f'Error getting client: {str(e)}')
       return None
 
-  async def get_client_uuid(self, client_id):
+  async def get_client_uuid(self, uuid):
     try:
-      client=await self.db.scalar(select(Client).filter_by(uuid=client_id))
+      client=await self.db.scalar(select(Client).filter_by(uuid=uuid))
       return client
     except Exception as e:
       print(f'Error getting client by UUID: {str(e)}')
@@ -204,7 +208,7 @@ class DataManager:
         await self.db.rollback()  # Wycofanie zmian w razie błędu
         raise Exception(f"Failed to delete tokens: {str(e)}")
 
-  async def put_access_token(self, token, client_id, user_id=0):
+  async def put_access_token(self, token, client_id, user_id=0, scope=''):
     try:
         async with self.db.begin():  # Rozpoczyna transakcję
             result = self.db.execute(delete(Token).where(Token.client_id == client_id, Token.user_id == user_id))
@@ -219,7 +223,7 @@ class DataManager:
         #expires_at = ?,
         #expires_in = ?,
         refresh_token = '',
-        scope = ''
+        scope = scope
         )
       self.db.add(tk)
       await self.db.flush()

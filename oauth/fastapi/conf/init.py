@@ -15,7 +15,7 @@ db_name = config['db']['name']
 #SQLALCHEMY_DATABASE_URL = 'sqlite:///' + os.path.join(basedir, db_name + '.db')
 
 #SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///" + os.path.join(basedir, db_name + '.db')
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///api.db"
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///test.db"
 config['db']['uri']=SQLALCHEMY_DATABASE_URL
 
 Base = None

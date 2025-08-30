@@ -93,7 +93,11 @@ def create_id_token(host_url, user_id, client_id, extra_claims):
     }
     claims.update(extra_claims)
     key = jwk_context.get_rsa_key()
-    return jwt_encode(claims, key)
+
+    token=jwt_encode(claims, key)
+    # test:
+    d=api_token_decode(token)
+    return token
 
 
 async def access_token_retrieve_or_create( dm : DataManager, app_id, user_id=0, scope='', host_url='', autorenew=True):
@@ -101,7 +105,7 @@ async def access_token_retrieve_or_create( dm : DataManager, app_id, user_id=0, 
     if tk:  # czy aktualny?
         key = jwk_context.get_rsa_key()
         try:
-            jwt_decode(tk.token, key)
+            decoded=jwt_decode(tk.token, key)
         except JWException:
             if autorenew:
                 token = create_id_token(host_url, user_id, app_id, {'scope': scope})
@@ -113,9 +117,9 @@ async def access_token_retrieve_or_create( dm : DataManager, app_id, user_id=0, 
         return token
 
 
-async def api_token_create(dm : DataManager, client_id, user_id, scope, session: AsyncSession):
-    app_id = await dm.int_client_id(client_id, session)
-    return await access_token_retrieve_or_create(app_id, user_id, scope)
+async def api_token_create(dm : DataManager, client_id, user_id, scope):
+    app_id = await dm.int_client_id(client_id)
+    return await access_token_retrieve_or_create(dm, app_id, user_id, scope)
 
 def api_token_new(dm : DataManager, client_id, user_id, scope='', host_url=''):
     app_id = dm.int_client_id(client_id)
@@ -139,7 +143,7 @@ def api_token_decode(access_token):
             detail=f"Could not validate token: {str(e)}",
             type=OAuthException.INVALID_REQUEST
         )
-    logger = logging.getLogger("collector")
+    logger = logging.getLogger("api")
     if not payload:
         raise OAuthException(
             'access_token owner',
@@ -160,16 +164,16 @@ def api_token_decode(access_token):
     return (scope_list, user_id, client_id)
 
 
-def api_token_to_owner(token, scopes, scope_str):
-    logger = logging.getLogger("collector")
-    logger.info('TOKEN_TOowner %s, %s, %s' % (token, scopes, scope_str))
-    if scopes:
-        authenticate_value = f'Bearer scope="{scope_str}"'
+def api_token_to_owner(token, scope_list, scope):
+    logger = logging.getLogger("api")
+    logger.info('TOKEN_TOowner %s, %s, %s' % (token, scope_list, scope))
+    if scope_list:
+        authenticate_value = f'Bearer scope="{scope}"'
     else:
         authenticate_value = "Bearer"
     try:
         scope_list, user_ident, client_ident = api_token_decode(token)
-        for scope in scopes:
+        for scope in scope_list:
             if scope not in scope_list:
                 logger.info('scope not in list' + scope)
                 raise OAuthException(

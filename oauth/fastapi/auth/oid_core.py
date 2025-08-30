@@ -35,7 +35,7 @@ class OAuth2RequestForm:
     self.client_id = client_id
     self.client_secret = client_secret
     self.scope = scope
-    self.scopes = scope.split()
+    #self.scopes = scope.split()
     self.redirect_uri = redirect_uri
     self.code = code
     self.code_verifier = code_verifier
@@ -43,7 +43,7 @@ class OAuth2RequestForm:
   async def __call__(self, form):
     return self
 
-async def handle_oauth_authorize(dm : DataManager, response_type, user_id, client_id, redirect_uri, scopes, state, code_challenge=None, code_challenge_method=None):
+async def handle_oauth_authorize(dm : DataManager, response_type, user_id, client_id, redirect_uri, scope, state, code_challenge=None, code_challenge_method=None):
   try:
     cl_app = await validator.validate_client(dm,client_id)
   except Exception as e:
@@ -78,7 +78,7 @@ async def handle_oauth_authorize(dm : DataManager, response_type, user_id, clien
       'redirect_uri': redirect_uri,
       'client_id': client_id,
       'user_id': user_id,
-      'scopes': scopes,
+      'scope': scope,
       'exp': int(time.time()) + 60,
       'code_challenge': code_challenge,
       'code_challenge_method': code_challenge_method
@@ -87,7 +87,7 @@ async def handle_oauth_authorize(dm : DataManager, response_type, user_id, clien
     key = jwk_context.get_jwt_key()
     response_params['code'] = jwt_encode(payload, key)
   if 'token' in response_types:
-    access_token = await access_token_retrieve_or_create(dm, client_id, user_id, scopes)
+    access_token = await access_token_retrieve_or_create(dm, client_id, user_id, scope)
     response_params['access_token'] = access_token
     response_params['token_type'] = 'bearer'
 
@@ -155,7 +155,8 @@ async def handle_grant_type_authorization_code(dm : DataManager, host_url, clien
     'access_token': token,
     'token_type': 'bearer'
   }
-  if 'openid' in payload['scopes']:
+  scopes=payload['scope'].split(' ')
+  if 'openid' in scopes:
     extra_claims = {name: payload[name] for name in payload if name in ['sid', 'nonce']}
   if scope:
     extra_claims['scope'] = scope
@@ -243,6 +244,9 @@ class OAuthValidator():
       )
     return response_mode
 
+  def validate_scope(self,scope):
+    return True # todo
+
   def arg_or_null(self,args, id):
     return args[id] if id in args else None
 
@@ -261,8 +265,8 @@ class OAuthValidator():
     #    raise OAuthException("Invalid redirect URI", "invalid_request")
 
     # Walidacja scope
-    #if 'scope' in args and not validate_scopes(args['scope']):
-    #  raise OAuthException("Invalid scope", "invalid_scope")
+    if 'scope' in args and not self.validate_scope(args['scope']):
+      raise OAuthException("Invalid scope", "invalid_scope")
 
     # Dodatkowa walidacja nonce/state dla CSRF
     if 'nonce' in args and len(args['nonce']) < 8:
@@ -275,14 +279,13 @@ class OAuthValidator():
         OAuthException.INVALID_GRANT,
       )
     redirect_uri = args['redirect_uri']
-    scopes = args.get('scope').split(' ') if args.get('scope') else []
     response_mode = args.get('response_mode')
     if not response_mode:
       response_mode = 'query' if response_type == 'code' else 'fragment'
     return (response_type,
             self.arg_or_null(args, 'client_id'),
             redirect_uri,
-            scopes,
+            self.arg_or_null(args, 'scope'),
             self.arg_or_null(args, 'state'),
             response_mode,
             self.arg_or_null(args, 'code_challenge'),

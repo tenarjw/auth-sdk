@@ -26,7 +26,7 @@ class TestApp:
   def __init__(self):
     self.config={}
     self.config["client_id"]='9a195ac5-1a34-4bdd-837e-13f80bc5364d' #uuid(1)
-    self.config["scopes"]='test'
+    self.config["scope"]=''
     self.ip=server_ip
     self.port=server_port
     self.config["redirect_uri"]='http://%s:%s' % (server_ip,server_port)
@@ -37,7 +37,7 @@ class TestApp:
           'response_type': 'token',
           'code': code,
           'client_id': self.config["client_id"],
-          'scopes': self.config["scopes"],
+          'scope': self.config["scope"],
           'redirect_uri': self.config["redirect_uri"]
       }
     try:

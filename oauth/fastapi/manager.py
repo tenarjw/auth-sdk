@@ -1,10 +1,16 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import argparse
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+import uuid as uuidmod
 from auth.context.database import DataManager
 from conf import SQLALCHEMY_DATABASE_URL
 
+
 # Asynchroniczna konfiguracja bazy danych
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+#SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///")
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 async def create():
@@ -70,16 +76,15 @@ if __name__ == "__main__":
     parser.add_argument('--uri', help='Redirect URI')
     parser.add_argument('--email', help='Option: user email', default='')
     parser.add_argument('--id', help='Option: id (client\'s)', default='1')
-    parser.add_argument('--db', help='Database Path eg: sqlite:///demo.db')
+#    parser.add_argument('--db', help='Database Path eg: sqlite:///demo.db')
 
     args = parser.parse_args()
 
     if not hasattr(args, 'operation'):
         parser.print_help()
     else:
-        if args.db:
-          global SQLALCHEMY_DATABASE_URL
-          SQLALCHEMY_DATABASE_URL = args.db.replace("sqlite:///", "sqlite+aiosqlite:///")
+#        if args.db:
+#          SQLALCHEMY_DATABASE_URL
         if args.operation == 'create':
             asyncio.run(create())
         elif args.operation == 'demo':
