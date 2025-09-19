@@ -1,0 +1,3628 @@
+{
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "info": {
+    "title": "User Agent API",
+    "version": "1.0.16",
+    "description": "<p>\nSpecyfikacja interfejsu skrzynek eDoręczeń\n</p>\n<br>\n<p>\n<b><font size=\"6\"> Scenariusze:</fint></b> <br>\n</p>\n<p>\n<b>Utwórz wiadomość roboczą</b> <br>\nPOST /{eDeliveryAddress}/drafts\n</p>\n<p>\n<b>Dodaj załącznik</b> <br>\nZałącznik dodajemy do wcześniej utworzonej wiadomości roboczej.  <br>\nDodawanie dużych zalaczników - patrz Zalączniki. <br>\nPOST /{eDeliveryAddress}/drafts/{messageId}/attachments\n</p>\n<p>\n<b>Usuń załącznik</b> <br>\nDELETE /{eDeliveryAddress}/drafts/{messageId}/attachments/{attachmentId}\n</p>\n<p>\n<b>Wyślij wiadomość roboczą</b> <br>\nPOST /{eDeliveryAddress}/drafts/{messageId}/send\n</p>\n<p>\n<b>Pobierz wiadomości robocze</b> <br>\nGET /{eDeliveryAddress}/drafts <br>\nWiadomości robocze można pobrać w trybie - metadata<br>\nDomyślnie - metadata\n</p>\n<p>\n<b>Pobierz wiadomość roboczą</b> <br>\nGET /{eDeliveryAddress}/drafts/{messageId} <br>\nWiadomość roboczą można pobrać w trzech trybach - full, metadata, minimal <br>\nDomyślnie - full\n</p>\n<p>\n<b>Usuń wiadomość roboczą</b> <br>\nDELETE /{eDeliveryAddress}/drafts/{messageId}\n</p>\n<p>\n<b>Wyślij wiadomość/wiadomości</b> <br>\nPOST /{eDeliveryAddress}/messages\n</p>\n<p>\n<b>Pobierz wiadomości</b> <br>\nGET /{eDeliveryAddress}/messages <br>\nWiadomości można pobrać w dwóch trybach - metadata, minimal <br>\nDomyślnie - minimal\n</p>\n<p>\n<b>Odczytaj wiadomość</b> <br>\nGET /{eDeliveryAddress}/messages/{messageId} <br>\nWiadomość można pobrać w czterech trybach - full, metadata, minimal, fullExtended. <br>\nDomyślnie - full <br>\n</p>\n<p>\n<b>Pobierz załącznik</b> <br>\nZ wiadomości <br>\nGET /{eDeliveryAddress}/messages/{messageId}/attachments/{attachmentId} <br>\nZ wiadomości roboczej <br>\nGET /{eDeliveryAddress}/drafts/{messageId}/attachments/{attachmentId}\n</p>\n<p>\n<b>Prześlij wiadomość dalej</b> <br>\nGET /{eDeliveryAddress}/messages/{messageId} <br>\nWyślij wiadomość zachowując threadId wiadomości źródłowej - MessageMetadata.threadId <br>\nPOST /{eDeliveryAddress}/messages\n</p>\n<p>\n<b>Odpowiedz na wiadomość</b> <br>\nGET /{eDeliveryAddress}/messages/{messageId} <br>\nWyślij wiadomość z threadId wiadomości źródłowej - MessageMetadata.threadId <br>\nPOST /{eDeliveryAddress}/messages\n</p>\n<p>\n<b> Usuń wiadomość</b> <br>\nDELETE /{eDeliveryAddress}/messages/{messageId}\n</p>\n<p>\n<b>Pobierz potwierdzenia</b> <br>\nGET /{eDeliveryAddress}/messages/{messageId}/evidences\n</p>\n<p>\n<b><font size=\"6\">Uprawnienia:</fint></b> <br>\n</p>\n<p>\n<b>Sposoby uwierzytelniania i autoryzacji. </b> <br>\n</p>\n<p>\nRozwiązanie opiera się na standardach SAML 2.0, X.509, OAuth 2.0, UMA 2.0. <br>\n</p>\n<p>\n<b>Uwierzytelnienie na serwerze autoryzacyjnym (Authorization Server): </b> <br>\n</p>\n<p>\nW przypadku systemów klasy EZD oraz innych systemów, klient (Client) uwierzytelnia się na serwerze autoryzacyjnym (Authorization Server) certyfikatem X.509. <br>\n<a href=\"https://datatracker.ietf.org/doc/draft-ietf-oauth-mtls/?include_text=1\">OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</a>\n\nObywatele (Resource Owner, Requesting Party), uwierzytelniają się  Węzłem Krajowym - SAML 2.0. <br>\n<a href=\"https://datatracker.ietf.org/doc/rfc7522/?include_text=1\">Security Assertion Markup Language (SAML) 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants</a>\n</p>\n<p>\n<b>Autoryzacja:</b> <br>\n</p>\n<p>\nW zależności od kontekstu – potrzeba autoryzacji klienta (Client), bądź też osoby (Requesting Party), autoryzacja OAuth 2.0 lub UMA 2.0. <br>\n</p>\n<p>\n<b>Deployment:</b> <br>\n</p>\n<p>\nMożliwe są dwa podejścia do rozmieszczenia serwerów autoryzacyjnych: <br>\n<ul>\n<li>\nModel scentralizowany – każdy dostawca skrzynek/usług jest zintegrowany z centralnym serwerem autoryzacyjnym. <br>\n</li>\n<li>\nModel rozproszony – każdy dostawca integruje się z własnym/zaufanym serwerem autoryzacyjnym. <br>\n</li>\n</ul>\n</p>\n<p>\nW każdym podejściu uwierzytelnianie odbywa się za pomocą certyfikatów X.509 lub Węzła Krajowego. W przyszłości możliwość integracji z innymi zaufanymi dostawcami tożsamości, eID, … <br>\n</p>\n<p>\n<b>Definiowanie uprawnień:</b> <br>\n</p>\n<p>\nPodstawowy model uprawnień zdefiniowany jest w sekcji securitySchemes.<br>\nModel uprawnień do wiadomości można rozszerzyć bazując na strukturze Label.<br>\n\n<b>Wzorzec definicji uprawnień do wiadomości:</b><br>\npermission.[ labels =] gdzie permission to uprawnienie zdefiniowane w sekcji securitySchemes - dotyczy uprawnień na poziomie eDeliveryAddress, labels zdefiniowne w MessageControlData.labels\n\n<b>Przykłady:</b><br>\n<code>\n{\n  \"iss\": https://authorization-server.gov.pl,\n  \"aud\": \"https://epuap.mailbox.pl/abc123/messages\",\n  \"sub\": \"def456\",\n  \"scope\": \"write_messages\",\n  \"iat\": 1458785432,\n  \"exp\": 1458872439\n}\n</code>\nread write dla całej zawartości skrzynki<br>\n\n<code>\n{\n  \"iss\": \"https://authorization-server.gov.pl\",\n  \"aud\": \"https://epuap.mailbox.pl/abc123/messages\",\n  \"sub\": \"def456\",\n  \"scope\": \"write_messages.labels=INVOICES\",\n  \"iat\": 1458785432,\n  \"exp\": 1458872439\n}\n</code>\n<br>\nread write dla wiadomości opatrzonych etykietą \"INVOICES\"<br>\n\n<code>\n{\n  \"iss\": \"https://authorization-server.gov.pl\",\n  \"aud\": \"https://epuap.mailbox.pl/abc123/messages\",\n  \"sub\": \"def456\",\n  \"scope\": \"write_messages.labels=EPUAP,ZUS\",\n  \"iat\": 1458785432,\n  \"exp\": 1458872439\n}\n</code>\nread write dla wiadomości opatrzonych etykietami \"EPUAP\" lub \"ZUS\"<br>\n\nAnalogicznie pozostale endpointy.\n</p>\n<p>\n<b><font size=\"6\"> Inne:</fint></b> <br>\n</p>\n<p>\n<b>Wysyłka hybrydowa</b>\nRóżnica pomiędzy wysyłką elektroniczną a hybrydową polega wyłącznie na innej adresacji wiadomości\nW przypadku przesyłki hybrydowej w messageAddressData podajemy Adress, który jest adresem fizycznym.\nNastępnie umieszczamy te dane w messageMetadatato. <br> Fizyczne dane adresowe nadawcy również muszą być uzupełnione podczas wysyłki hybrydowej - takie dane umieszczamy MessageMetadatafrom. <br> W przypadku przesyłki elektronicznej w MessageAddressData wypełniamy pole eDeliveryAddress, który jest adresem do wysyłki elektronicznej. <br> MessageMetadata.from jest zawsze adresem elektronicznym.\n</p>\n"
+  },
+  "tags": [
+    {
+      "name": "Messages",
+      "description": "Wiadomości"
+    },
+    {
+      "name": "Drafts",
+      "description": "Szkice"
+    },
+    {
+      "name": "Threads",
+      "description": "Wątki"
+    },
+    {
+      "name": "Subscriptions",
+      "description": "Subskrypcje"
+    },
+    {
+      "name": "Directories",
+      "description": "Katalogi"
+    },
+    {
+      "name": "Attachments",
+      "description": "Załączniki"
+    },
+    {
+      "name": "Settings",
+      "description": "Ustawienia skrzynki"
+    },
+    {
+      "name": "Evidences",
+      "description": "Potwierdzenia"
+    }
+  ],
+  "paths": {
+    "/{eDeliveryAddress}/messages": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Lists messages.",
+        "description": "Pobranie listy wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "description": "Liczba elementów, które należy pominąć."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Liczba elementów które należy zwrócić."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format wiadomości - minimalny zakresdanych niezbędny do identyfikacji wiadomości, metadane wiadomości. Zakres trybu metadata - [opened, status, MessageType, labels, from, to ,subject, messageId, refToMessageId, threadId, timestamp, receiptDate, submissionDate, eventDate, shippingService]",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "metadata",
+                "minimal"
+              ],
+              "default": "minimal"
+            }
+          },
+          {
+            "name": "sender",
+            "in": "query",
+            "description": "Nadawca - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recipient",
+            "in": "query",
+            "description": "Adresat - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "Temat wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "submissionDateFrom",
+            "in": "query",
+            "description": "Data od dla pola submissionDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "submissionDateTo",
+            "in": "query",
+            "description": "Data do dla pola submissionDate.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateFrom",
+            "in": "query",
+            "description": "Data od dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateTo",
+            "in": "query",
+            "description": "Data do dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "receiptDateFrom",
+            "in": "query",
+            "description": "Data otrzymania od",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "receiptDateTo",
+            "in": "query",
+            "description": "Data otrzymania do",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "attachments",
+            "in": "query",
+            "description": "Wiadomość z załącznikiem",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "label",
+            "in": "query",
+            "description": "Folder do pobrania listy wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shippingService",
+            "in": "query",
+            "description": "Rodzaj usługi",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "electronic",
+                "hybrid"
+              ]
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sender",
+                "recipient",
+                "subject",
+                "submissionDate",
+                "eventDate",
+                "reciptDate"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "opened",
+            "in": "query",
+            "description": "Czy wiadomość została już odczytana (odczytanie to pobranie wiadomości po messageId w trybie FULL lub w trybie FULL Extended).",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagesWrapper"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Sends message.",
+        "description": "Wysłanie wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Wiadomość",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MessageOperationResponsePost"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/{messageId}": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Gets message.",
+        "description": "Pobranie wiadomości o danym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "description": "Identyfikator wiadomości",
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format wiadomości - minimalny zakresdanych niezbędny do identyfikacji wiadomości, metadane wiadomości, pełna wiadomość z listą załączników (bez treści), pełna wiadomość z załącznikami. Zakres trybu metadata - [opened, status, MessageType, labels, from, to ,subject, messageId, refToMessageId, threadId, timestamp, receiptDate, submissionDate, eventDate, shippingService]",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fullExtended",
+                "full",
+                "metadata",
+                "minimal"
+              ],
+              "default": "full"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Deletes message.",
+        "description": "Usunięcie wiadomości o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MassageOperationResponseSingleWrapper"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/threads": {
+      "get": {
+        "tags": [
+          "Threads"
+        ],
+        "summary": "Get list of threads",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sender",
+            "in": "query",
+            "description": "Nadawca - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recipient",
+            "in": "query",
+            "description": "Adresat - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "caseId",
+            "in": "query",
+            "description": "Numer sprawy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "description": "Liczba elementów, które należy pominąć."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 10
+            },
+            "required": false,
+            "description": "Liczba elementów które należy zwrócić."
+          },
+          {
+            "name": "submissionDateFrom",
+            "in": "query",
+            "description": "Data od dla pola submissionDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "submissionDateTo",
+            "in": "query",
+            "description": "Data do dla pola submissionDate.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateFrom",
+            "in": "query",
+            "description": "Data od dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateTo",
+            "in": "query",
+            "description": "Data do dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "messageTitle",
+            "in": "query",
+            "description": "Tytuł wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "firstMessageTitle",
+                "firstMessageSubmissionDate",
+                "firstMessageEventDate",
+                "lastMessageSubmissionDate",
+                "lastMessageEventDate"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Threads"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/threads/{threadId}": {
+      "get": {
+        "tags": [
+          "Threads"
+        ],
+        "summary": "Get thread by id",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "description": "Identyfikator wątku.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sender",
+            "in": "query",
+            "description": "Nadawca - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recipient",
+            "in": "query",
+            "description": "Adresat - imię i nazwisko, nazwa albo ADE",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "caseId",
+            "in": "query",
+            "description": "Numer sprawy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "submissionDateFrom",
+            "in": "query",
+            "description": "Data od dla pola submissionDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "submissionDateTo",
+            "in": "query",
+            "description": "Data do dla pola submissionDate.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateFrom",
+            "in": "query",
+            "description": "Data od dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "eventDateTo",
+            "in": "query",
+            "description": "Data do dla pola eventDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "messageTitle",
+            "in": "query",
+            "description": "Tytuł wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "description": "Liczba wiadomości, które należy pominąć."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 50
+            },
+            "description": "Limit wiadomości"
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sender",
+                "recipient",
+                "caseID",
+                "submissionDate",
+                "eventDate",
+                "reciptDate"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Thread"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/{messageId}/message_control_data": {
+      "patch": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Update message control data.",
+        "description": "Aktualizacja danych kontrolnych wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Identyfikator wiadomości."
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/MessageControlDataPatch"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageControlDataPatchResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/message_subscriptions": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get info about subscriptions",
+        "description": "Pobierz informacje o włączonych i wyłączonych subskrypcjach",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Subscriptions"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Turn on/off subscription",
+        "description": "Włącz/Wyłącz subskrypcje",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ManageSubscription"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Creates message subscription.",
+        "description": "Subskrypcja klienta w celu otrzymywania notyfikacji o zdarzeniach związanych z wiadomościami.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/SubscriptionCreate"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "callbacks": {
+          "onMessage": {
+            "{$request.body#/field-name/messageCallbackUrl}": {
+              "post": {
+                "requestBody": {
+                  "description": "Dane wiadomości",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/MessageStatement"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "$ref": "#/components/responses/SuccessResponse"
+                  },
+                  "400": {
+                    "$ref": "#/components/responses/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "onEvidence": {
+            "{$request.body#/field-name/evidenceCallbackUrl}": {
+              "post": {
+                "requestBody": {
+                  "description": "Dane wiadomości",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/MessageStatement"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "$ref": "#/components/responses/SuccessResponse"
+                  },
+                  "400": {
+                    "$ref": "#/components/responses/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "onInbox": {
+            "{$request.body#/field-name/inboxCallbackUrl}": {
+              "post": {
+                "requestBody": {
+                  "description": "Dane wiadomości",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/MessageStatement"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "$ref": "#/components/responses/SuccessResponse"
+                  },
+                  "400": {
+                    "$ref": "#/components/responses/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Deletes message subscription.",
+        "description": "Usunięcie subskrypcji",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts": {
+      "get": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Lists drafts.",
+        "description": "Pobranie listy wersji roboczych wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "required": false,
+            "description": "Liczba elementów, które należy pominąć."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Liczba elementów które należy zwrócić."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format wiadomości - minimalny zakresdanych niezbędny do identyfikacji wiadomości, metadane wiadomości, pełna wiadomość. Zakres trybu metadata - [opened, status, MessageType, labels, from, to ,subject, messageId, refToMessageId, threadId, timestamp, receiptDate, submissionDate, eventDate, shippingService]",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "metadata"
+              ],
+              "default": "metadata"
+            }
+          },
+          {
+            "name": "recipient",
+            "in": "query",
+            "description": "Adresat",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "Temat wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachments",
+            "in": "query",
+            "description": "Wiadomość z załącznikiem",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "label",
+            "in": "query",
+            "description": "Etykieta wiadomości",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shippingService",
+            "in": "query",
+            "description": "Rodzaj usługi",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "electronic",
+                "hybrid"
+              ]
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "recipient",
+                "subject",
+                "timestamp"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessagesWrapper"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Creates draft.",
+        "description": "Utworzenie wiadomości roboczej.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Wiadomość robocza",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MessageOperationResponseSinglePut"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts/{messageId}": {
+      "get": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Gets draft.",
+        "description": "Pobranie wiadomości roboczej o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Identyfikator wiadomości roboczej."
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Format wiadomości - minimalny zakresdanych niezbędny do identyfikacji wiadomości, metadane wiadomości, pełna wiadomość. Zakres trybu metadata - [opened, status, MessageType, labels, from, to ,subject, messageId, refToMessageId, threadId, timestamp, receiptDate, submissionDate, eventDate, shippingService]",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "metadata",
+                "minimal"
+              ],
+              "default": "full"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Update draft.",
+        "description": "Aktualizacja wiadomości roboczej.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Identyfikator wiadomości roboczej."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Wiadomość robocza",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MessageOperationResponseSinglePut"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Deletes draft.",
+        "description": "Usunięcie wiadomości roboczej o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MassageOperationResponseSingleWrapper"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts/{messageId}/send": {
+      "post": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Sends draft.",
+        "description": "Wysanie wiadomości roboczej o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MessageOperationResponsePost"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/directories/{directoryId}": {
+      "delete": {
+        "tags": [
+          "Directories"
+        ],
+        "summary": "Delete directory.",
+        "description": "Usunięcie katalogu.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "directoryId",
+            "in": "path",
+            "description": "Identyfikator katalogu.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Directories"
+        ],
+        "summary": "Rename directory.",
+        "description": "Zmiana nazwy katalogu.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "directoryId",
+            "in": "path",
+            "description": "Identyfikator katalogu.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/DirectoryPatch"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/directories": {
+      "get": {
+        "tags": [
+          "Directories"
+        ],
+        "summary": "Get directories.",
+        "description": "Pobranie listy katalogów.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/DirectoriesGet"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Directories"
+        ],
+        "summary": "Add directory.",
+        "description": "Utwórz katalog.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/DirectoryAdd"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/DirectoriesGet"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts/send": {
+      "post": {
+        "tags": [
+          "Drafts"
+        ],
+        "summary": "Sends draft.",
+        "description": "Wysanie wiadomości roboczej o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Wiadomość robocza",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendDraft"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/MessageOperationResponsePost"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/{messageId}/attachments/{attachmentId}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Gets message attachment.",
+        "description": "Pobranie załącznika o podanym id.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Identyfikator załącznika",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Attachment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts/{messageId}/attachments/{attachmentId}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Gets message attachment.",
+        "description": "Pobranie załącznika o podanym id dla wiadomości roboczej.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Identyfikator załącznika",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Attachment"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Deletes Attachment.",
+        "description": "Usunięcie podanego załącznika z wiadomości roboczej.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Identyfikator załącznika",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/drafts/{messageId}/attachments": {
+      "post": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Message attachment upload.",
+        "description": "Przesłanie załącznika na serwer.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/File"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileWrapper"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Deletes Attachment.",
+        "description": "Usunięcie załączników z wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości roboczej",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileMetadata"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/{messageId}/evidences": {
+      "get": {
+        "tags": [
+          "Evidences"
+        ],
+        "summary": "Gets evidences.",
+        "description": "Pobranie potwierdzeń dla danego adresu i wiadomości.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Typ potwierdzenia - kod",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "downloaded",
+            "in": "query",
+            "description": "Czy potwierdzenie było już pobrane",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eventDate"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceWrapper"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/evidences/{messageId}/technical-evidences-file": {
+      "get": {
+        "tags": [
+          "Evidences"
+        ],
+        "summary": "Gets ZIP file with technical evidences for single message archive download.",
+        "description": "Pobranie pliku zip zawierającego techniczne dowody pojedynczej wiadomości do zapisania lokalnie.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "description": "Identyfikator wiadomości",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/evidences": {
+      "get": {
+        "tags": [
+          "Evidences"
+        ],
+        "summary": "Gets evidences for address.",
+        "description": "Pobranie potwierdzeń dla danego adresu do wiadomości, które nadal istnieją w SD",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Typ potwierdzenia - kod",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "downloaded",
+            "in": "query",
+            "description": "Czy potwierdzenie było już pobrane",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sortColumn",
+            "in": "query",
+            "description": "Kolumna po której ma się odbywać sortowanie",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "eventDate"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "description": "Kierunek sortowania",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceWrapper"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/evidences/{evidenceId}": {
+      "get": {
+        "tags": [
+          "Evidences"
+        ],
+        "summary": "Gets evidence by ID.",
+        "description": "Pobranie potwierdzenia po jego ID.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "description": "Identyfikator potwierdzenia",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Evidence"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/settings": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Gets mailbox settings.",
+        "description": "Pobranie ustawień skrzynki.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Patches mailbox settings.",
+        "description": "Modyfikacja ustawień skrzynki.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "write_settings"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/SettingsPatch"
+        },
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Settings"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/dictionary/countries": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Gets names of countries.",
+        "description": "Pobranie listy nazw państw.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Nazwa państwa"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/{eDeliveryAddress}/messages/{messageId}/message-archive-file": {
+      "get": {
+        "tags": [
+          "Messages"
+        ],
+        "summary": "Gets ZIP file for single or multiple messages archive download.",
+        "description": "Pobranie pliku zip zawierającego zawartość pojedynczej wiadomości do zapisania lokalnie.",
+        "security": [
+          {
+            "oAuthUserAgent": [
+              "read_messages"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "eDeliveryAddress",
+            "in": "path",
+            "description": "Identyfikator adresu/skrzynki.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "description": "Identyfikator wiadomości",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operacja wykonana poprawnie",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FileWrapper": {
+        "type": "object",
+        "properties": {
+          "attachmentId": {
+            "type": "string",
+            "description": "ID załącznika"
+          },
+          "warning": {
+            "type": "string",
+            "description": "Ostrzeżenie o przepełnieniu skrzynki"
+          },
+          "fileMetadata": {
+            "$ref": "#/components/schemas/FileMetadata"
+          }
+        }
+      },
+      "EvidenceWrapper": {
+        "type": "object",
+        "properties": {
+          "evidences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            }
+          },
+          "warning": {
+            "type": "string",
+            "description": "Ostrzeżenie o przepełnieniu skrzynki"
+          }
+        }
+      },
+      "DirectoryAdd": {
+        "type": "object",
+        "properties": {
+          "directoryName": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "Nazwa katalogu"
+          },
+          "directoryLabel": {
+            "type": "string",
+            "description": "Etykieta katalogu"
+          }
+        }
+      },
+      "DirectoryPatch": {
+        "type": "object",
+        "properties": {
+          "newDirectoryName": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "Nowa nazwa katalogu"
+          }
+        }
+      },
+      "SubscriptionCreate": {
+        "type": "object",
+        "properties": {
+          "messageCallbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL serwera do notyfikacji przychodzących wiadomości"
+          },
+          "evidenceCallbackUrl": {
+            "type": "string",
+            "description": "URL serwera do notyfikacji przychodzących potwierdzeń"
+          },
+          "inboxCallbackUrl": {
+            "type": "string",
+            "description": "URL serwera do notyfikacji zakończenia przekazywania wiadomości z usługi do skrzynki ADE"
+          }
+        }
+      },
+      "Contributor": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Imię"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Nazwisko"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Nazwa firmy. PUH - max 50 znaków, PURDE - max 1900 znaków"
+          },
+          "companyNameContinued": {
+            "type": "string",
+            "description": "Nazwa firmy cd. PUH - max 100 znaków, PURDE - max 100 znaków"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "description": "headquarters address or correspondence address",
+        "required": [
+          "country",
+          "postalCode",
+          "city",
+          "street"
+        ],
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "państwo"
+          },
+          "street": {
+            "type": "string",
+            "description": "ulica"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "kod pocztowy"
+          },
+          "city": {
+            "type": "string",
+            "description": "miasto"
+          },
+          "buildingNumber": {
+            "type": "string",
+            "description": "numer budynku"
+          },
+          "houseNumber": {
+            "type": "string",
+            "description": "numer mieszkania"
+          }
+        }
+      },
+      "MessageAddressData": {
+        "type": "object",
+        "properties": {
+          "eDeliveryAddress": {
+            "type": "string",
+            "description": "Adres e-Delivery",
+            "example": "mailbox_address"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "contributor": {
+            "$ref": "#/components/schemas/Contributor"
+          }
+        }
+      },
+      "FileMetadata": {
+        "required": [
+          "fileId"
+        ],
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID pliku",
+            "example": "D41568F4-7175-42BB-9503-DAA282180D70"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Nazwa pliku",
+            "example": "document.pdf"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Typ MIME",
+            "example": "text/plain"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Rozmiar pliku"
+          },
+          "alg": {
+            "type": "string",
+            "description": "Nazwa algorytmu haszującego, jedyny dozwolony SHA-3",
+            "example": "SHA-3"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Hasz pliku"
+          },
+          "description": {
+            "type": "string",
+            "description": "Opis pliku",
+            "example": "Text document"
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "fileMetadata": {
+            "$ref": "#/components/schemas/FileMetadata"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Label": {
+        "type": "object",
+        "description": "Folder w ADE, do którego jest przypisana wiadomość",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "INBOX, SENT, UNREAD, PUBLIC_ADMINISTRATION, TAXES"
+          },
+          "messageLocation": {
+            "type": "string",
+            "description": "directoryLabel",
+            "example": "MOJ_NOWY_FOLDER"
+          }
+        }
+      },
+      "MessageMetadata": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/MessageAddressData"
+          },
+          "to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageAddressData"
+            }
+          },
+          "hybridShipment": {
+            "$ref": "#/components/schemas/HybridShipment"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Tytuł wiadomości"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID wiadomości"
+          },
+          "refToMessageId": {
+            "type": "string",
+            "description": "ID wiadomości do której wiadomość się odnosi"
+          },
+          "threadId": {
+            "type": "string",
+            "description": "ID wątku"
+          },
+          "caseId": {
+            "type": "string",
+            "description": "ID sprawy"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Data utworzenia - określana po stronie systemu obsługującego ADE",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "receiptDate": {
+            "type": "string",
+            "description": "Data doręczenia z biznesowego potwierdzenia otrzymania lub dowodu H.EPO",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "submissionDate": {
+            "type": "string",
+            "description": "Wartość Submission Date and Time (M03) z dowodu A1 lub H.PN",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "eventDate": {
+            "type": "string",
+            "description": "Wartość Event Time (G05) z dowodu A1 lub H.PN",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "shippingService": {
+            "type": "string",
+            "enum": [
+              "electronic",
+              "hybrid"
+            ],
+            "description": "Wskazuje typ usługi. Dozwolone wartości: electronic (usługa elektronicznego doręczenia - RDE), hybrid (usługa hybrydowa - PUH)\n"
+          },
+          "additionalData": {
+            "type": "object",
+            "description": "Dodatkowe dane - klucz -> wartość",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MessageControlData": {
+        "type": "object",
+        "properties": {
+          "opened": {
+            "type": "boolean",
+            "description": "Czy wiadomość została już odczytana. Ustawiany wyłącznie po stronie systemu obsługującego ADE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status wiadomości. Ustawiany wyłącznie po stronie systemu obsługującego ADE",
+            "enum": [
+              "W weryfikacji",
+              "Przekazana do wysyłki",
+              "Odrzucona",
+              "Nadana",
+              "Wysłana",
+              "Czeka na doręczenie",
+              "Doręczona",
+              "Uznana za doręczoną",
+              "Niedoręczona"
+            ]
+          },
+          "statusDescription": {
+            "type": "string",
+            "description": "Powód odrzucenia wiadomości. Może zawierać wiele opisów rozdzielonych średnikami (;)"
+          },
+          "messageType": {
+            "type": "string",
+            "description": "Typ wiadomości",
+            "enum": [
+              "Message",
+              "Evidence"
+            ]
+          },
+          "labels": {
+            "type": "array",
+            "description": "Etykiety wskazujące na folder/lokalizację wiadomości",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          }
+        }
+      },
+      "MessageControlDataPatchResponse": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Identyfikator wiadomości"
+          },
+          "opened": {
+            "type": "boolean",
+            "description": "Czy wiadomość została już odczytana. Ustawiany wyłącznie po stronie systemu obsługującego ADE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status wiadomości. Ustawiany wyłącznie po stronie systemu obsługującego ADE",
+            "enum": [
+              "W weryfikacji",
+              "Przekazana do wysyłki",
+              "Odrzucona",
+              "Nadana",
+              "Wysłana",
+              "Czeka na doręczenie",
+              "Doręczona",
+              "Uznana za doręczoną",
+              "Niedoręczona"
+            ]
+          },
+          "statusDescription": {
+            "type": "string",
+            "description": "Powód odrzucenia wiadomości. Może zawierać wiele opisów rozdzielonych średnikami (;)"
+          },
+          "messageType": {
+            "type": "string",
+            "description": "Typ wiadomości",
+            "enum": [
+              "Message",
+              "Evidence"
+            ]
+          },
+          "labels": {
+            "type": "array",
+            "description": "Etykiety wskazujące na folder/lokalizację wiadomości",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "messageControlData": {
+            "$ref": "#/components/schemas/MessageControlData"
+          },
+          "messageMetadata": {
+            "$ref": "#/components/schemas/MessageMetadata"
+          },
+          "textBody": {
+            "type": "string",
+            "description": "Tekstowa część wiadomiści"
+          },
+          "attachments": {
+            "type": "array",
+            "description": "Załączniki",
+            "items": {
+              "$ref": "#/components/schemas/Attachment"
+            }
+          },
+          "evidences": {
+            "type": "array",
+            "description": "Dowody nadania/odbioru",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            }
+          }
+        }
+      },
+      "MessagesWrapper": {
+        "type": "object",
+        "required": [
+          "messages",
+          "resultSize"
+        ],
+        "properties": {
+          "messages": {
+            "type": "array",
+            "description": "Wiadomości",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "total": {
+            "description": "Liczba wiadomości spełniających kryteria zapytania.",
+            "type": "integer"
+          },
+          "electronicCount": {
+            "description": "Liczba wiadomości oczekujących na pobranie z usługi PURDE.",
+            "type": "integer"
+          },
+          "warning": {
+            "description": "Ostrzeżenie o zbliżającym się przepełnieniu skrzynki",
+            "type": "string"
+          }
+        }
+      },
+      "Attachment": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "integer",
+            "description": "Numer kolejny załącznika w ramach wiadomości"
+          },
+          "attachmentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID załącznika",
+            "example": "D41568F4-7175-42BB-9503-DAA282180D70"
+          },
+          "file": {
+            "$ref": "#/components/schemas/File"
+          }
+        }
+      },
+      "Evidence": {
+        "required": [
+          "evidenceId",
+          "messageId"
+        ],
+        "type": "object",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "description": "ID potwierdzenia"
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID wiadomości"
+          },
+          "createDate": {
+            "type": "string",
+            "description": "Data utworzenia potwierdzenia",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "eventDate": {
+            "type": "string",
+            "description": "Czas zdarzenia dla potwierdzenia",
+            "format": "date-time",
+            "example": "2017-07-21T17:32:28.000Z"
+          },
+          "reasonDetails": {
+            "type": "string",
+            "description": "Szczegóły powodu"
+          },
+          "reasonId": {
+            "type": "string",
+            "description": "Numer identyfikacyjny powodu"
+          },
+          "externalData": {
+            "type": "string",
+            "description": "URL do wygenerowanego pliku potwierdzenia"
+          },
+          "downloaded": {
+            "type": "boolean",
+            "description": "Czy potwierdzenie było wcześniej pobrane"
+          },
+          "type": {
+            "type": "string",
+            "description": "Typ potwierdzenia - kod",
+            "enum": [
+              "A.1",
+              "A.2",
+              "B.1",
+              "B.2",
+              "B.3",
+              "D.1",
+              "D.2",
+              "D.3",
+              "E.1",
+              "E.2",
+              "BP.WX",
+              "BP.WP",
+              "BP.OX",
+              "BP.OP",
+              "H.DW",
+              "H.PN",
+              "H.EPO"
+            ]
+          },
+          "from": {
+            "$ref": "#/components/schemas/MessageAddressData"
+          },
+          "to": {
+            "$ref": "#/components/schemas/MessageAddressData"
+          }
+        }
+      },
+      "Settings": {
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "description": "numer telefonu - powiadomienia SMS"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "email - powiadomienia email"
+          },
+          "settings": {
+            "type": "object",
+            "description": "Uzgodnione wartości klucz - totalCapacity (całkowita pojemność skrzynki w MB), usedCapacity - używana pojemność skrzynki w MB)",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MessageStatement": {
+        "required": [
+          "eDeliveryAddress",
+          "notificationType"
+        ],
+        "type": "object",
+        "description": "Dane",
+        "properties": {
+          "eDeliveryAddress": {
+            "type": "string",
+            "description": "Adres skrzynki ADE"
+          },
+          "notificationType": {
+            "type": "string"
+          },
+          "electronicCount": {
+            "type": "integer"
+          },
+          "notification": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/notificationInboxCallback"
+            }
+          }
+        }
+      },
+      "notificationInboxCallback": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID obiektu (w zależności od notyfikacji jest to ID wiadomości lub ID dowodu)"
+          },
+          "threadId": {
+            "type": "string",
+            "description": "ID wątku (wypełniane tylko dla notyfikacji InboxCallback)"
+          },
+          "type": {
+            "type": "string",
+            "description": "ID dowodu (wypełniane tylko dla notyfikacji NewEvidence"
+          }
+        }
+      },
+      "SuccessInfo": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status"
+          },
+          "notificationId": {
+            "type": "string",
+            "description": "ID notyfikacji"
+          },
+          "eDeliveryAddress": {
+            "type": "string",
+            "description": "Adres e-Delivery - ADE adresata"
+          },
+          "notification": {
+            "type": "string",
+            "description": "Czy subskrypcja włączona/wyłączona",
+            "enum": [
+              "on",
+              "off"
+            ]
+          }
+        }
+      },
+      "Threads": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "description": "Liczba wiadomości spełniających kryteria zapytania.",
+            "type": "integer"
+          },
+          "Thread": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThreadWrapper"
+            }
+          }
+        }
+      },
+      "ThreadWrapper": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "description": "Identyfikator wątku"
+          },
+          "caseIDs": {
+            "type": "array",
+            "description": "Numery sprawy",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recipients": {
+            "type": "array",
+            "description": "Adresaci",
+            "items": {
+              "$ref": "#/components/schemas/Contributor"
+            }
+          },
+          "senders": {
+            "type": "array",
+            "description": "Nadawcy",
+            "items": {
+              "$ref": "#/components/schemas/Contributor"
+            }
+          },
+          "firstMessageTitle": {
+            "type": "string",
+            "description": "Tytuł pierwszej wiadomości"
+          },
+          "firstMessageSubmissionDate": {
+            "description": "Submission date pierwszej wiadomości",
+            "type": "string",
+            "format": "date-time"
+          },
+          "firstMessagEventDate": {
+            "description": "Event date pierwszej wiadomości",
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastMessageSubmissionDate": {
+            "description": "Submission date ostatniej wiadomości",
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastMessagEventDate": {
+            "description": "Event date ostatniej wiadomości",
+            "type": "string",
+            "format": "date-time"
+          },
+          "messagesCount": {
+            "type": "number",
+            "description": "Liczba wiadomości w wątku"
+          }
+        }
+      },
+      "Thread": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "description": "Identyfikator wątku"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/MessagesWrapper"
+          }
+        }
+      },
+      "ErrorInfo": {
+        "required": [
+          "error",
+          "error_description"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Kod błędu",
+            "example": null
+          },
+          "error_description": {
+            "type": "string",
+            "description": "Opis błędu",
+            "example": null
+          },
+          "messageId": {
+            "type": "string",
+            "description": "ID wiadomości"
+          }
+        }
+      },
+      "DestinationDirectory": {
+        "type": "object",
+        "properties": {
+          "directoryId": {
+            "type": "string",
+            "description": "Identyfikator katalogu"
+          },
+          "directoryName": {
+            "type": "string",
+            "description": "Nazwa katalogu"
+          },
+          "directoryLabel": {
+            "type": "string",
+            "description": "Etykieta katalogu"
+          }
+        }
+      },
+      "PatchBody": {
+        "type": "array",
+        "maxItems": 1,
+        "items": {
+          "type": "object",
+          "required": [
+            "op",
+            "path"
+          ],
+          "properties": {
+            "op": {
+              "type": "string",
+              "description": "The operation to be performed",
+              "enum": [
+                "add",
+                "remove",
+                "replace",
+                "move",
+                "copy",
+                "test"
+              ]
+            },
+            "path": {
+              "type": "string",
+              "description": "A JSON-Pointer"
+            },
+            "value": {
+              "type": "object",
+              "description": "The value to be used within the operations."
+            }
+          }
+        }
+      },
+      "ManageSubscriptionBody": {
+        "type": "object",
+        "description": "Turn on/off subscription by id",
+        "required": [
+          "subscriptionId",
+          "status"
+        ],
+        "properties": {
+          "subscriptionId": {
+            "type": "string",
+            "description": "Subscription ID"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Turn on/off subscription (true - on, false - off)"
+          }
+        }
+      },
+      "MassageOperationResponseWrapperPost": {
+        "type": "object",
+        "properties": {
+          "MessageId": {
+            "type": "string",
+            "description": "Identyfikator wiadomości"
+          },
+          "AddresseeAde": {
+            "$ref": "#/components/schemas/AddresseeADE"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        }
+      },
+      "Directory": {
+        "type": "object",
+        "properties": {
+          "directoryId": {
+            "type": "string",
+            "description": "Identyfikator katalogu"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nazwa katalogu"
+          },
+          "label": {
+            "type": "string",
+            "description": "Etykieta katalogu"
+          },
+          "type": {
+            "type": "string",
+            "description": "Typ katalogu (definiowany/predefiniowany)",
+            "enum": [
+              "predefined",
+              "defined"
+            ]
+          }
+        }
+      },
+      "MassageOperationResponseWrapper": {
+        "type": "object",
+        "properties": {
+          "warning": {
+            "description": "Ostrzeżenie o zbliżającym się przepełnieniu skrzynki",
+            "type": "string"
+          },
+          "messageIds": {
+            "$ref": "#/components/schemas/MessageIds"
+          }
+        }
+      },
+      "MassageOperationResponseSingleWrapper": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "description": "Identyfikator wiadomości",
+            "type": "string"
+          }
+        }
+      },
+      "MassageOperationResponseSingleWrapperPut": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "description": "Identyfikator wiadomości",
+            "type": "string"
+          },
+          "warning": {
+            "description": "Ostrzeżenie o zbliżającym się przepełnieniu skrzynki",
+            "type": "string"
+          }
+        }
+      },
+      "MassageOperationResponseMultiWrapperPost": {
+        "type": "object",
+        "properties": {
+          "warning": {
+            "type": "string",
+            "description": "Ostrzeżenie o zbliżającym się przepełnieniu skrzynki"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MassageOperationResponseWrapperPost"
+            }
+          }
+        }
+      },
+      "MessageIds": {
+        "type": "object",
+        "properties": {
+          "messageIds": {
+            "type": "array",
+            "description": "Identyfikatory wiadomości",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AddresseeADE": {
+        "type": "string",
+        "description": "Adres skrzynki ADE adresata"
+      },
+      "SendDraft": {
+        "type": "object",
+        "required": [
+          "messageId"
+        ],
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Identyfikator wiadomości"
+          }
+        }
+      },
+      "Status": {
+        "type": "string",
+        "description": "Status"
+      },
+      "Subscription": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "url",
+          "status"
+        ],
+        "description": "Subscription info",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identyfikator subskrypcji"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nazwa subskrypcji"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL do subskrypcji"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "Czy subskrypcja włączona (true - włączona, false - wyłączona)"
+          }
+        }
+      },
+      "HybridShipment": {
+        "type": "object",
+        "required": [
+          "categoryService",
+          "printingMode",
+          "overprintMode",
+          "returnService",
+          "procedingType",
+          "shippingMode"
+        ],
+        "properties": {
+          "shipmentNumber": {
+            "type": "string",
+            "description": "Numer nadania przesyłki",
+            "maxLength": 32
+          },
+          "procedingType": {
+            "type": "string",
+            "enum": [
+              "general",
+              "administrative",
+              "tax",
+              "court_civil",
+              "court_criminal"
+            ],
+            "description": "Nadanie przesyłki rejestrowanej na zasadach specjalnych"
+          },
+          "sendersInformation": {
+            "type": "string",
+            "description": "Pole 30-znakowe nadrukowywane na kopercie w polu nadawcy",
+            "maxLength": 30
+          },
+          "categoryService": {
+            "type": "string",
+            "enum": [
+              "economic",
+              "priority"
+            ],
+            "description": "Termin doręczenia"
+          },
+          "formatService": {
+            "type": "string",
+            "enum": [
+              "XS",
+              "S",
+              "M",
+              "L"
+            ],
+            "description": "Format przesyłki"
+          },
+          "printingMode": {
+            "type": "string",
+            "enum": [
+              "duplex",
+              "simplex"
+            ],
+            "description": "Sposób wydruku (jednostronny, dwustronny)"
+          },
+          "overprintMode": {
+            "type": "string",
+            "enum": [
+              "monochrome",
+              "color"
+            ],
+            "description": "Rodzaj wydruku (biało-czarny, kolorowy)"
+          },
+          "returnService": {
+            "type": "string",
+            "enum": [
+              "returntosender",
+              "destroy"
+            ],
+            "description": "Sposób postępowania z przesyłką rejestrowaną w przypadku braku możliwości jej doręczenia"
+          },
+          "proofOfDelivery": {
+            "type": "boolean",
+            "description": "Potwierdzenie odbioru"
+          },
+          "posteRestante": {
+            "type": "boolean",
+            "description": "Poste Restante"
+          },
+          "caseContent": {
+            "type": "string",
+            "description": "Zawartość (tylko dla PUH krajowy rejestrowany, jeśli jest wybrany procedingType różne od General)",
+            "maxLength": 255
+          },
+          "shippingMode": {
+            "type": "string",
+            "enum": [
+              "registered",
+              "notRegistered"
+            ],
+            "description": "Przyjmuje wartości rejestrowany, nierejestrowany w przypadku gdy shippingService = publiczna usuga hybrydowa, pozostałe kwestie do ustalenia z PP"
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "MessageIds": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageIds"
+            }
+          }
+        }
+      },
+      "SettingsPatch": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PatchBody"
+            }
+          }
+        }
+      },
+      "ManageSubscription": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ManageSubscriptionBody"
+            }
+          }
+        }
+      },
+      "ResourcePermissionPatch": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PatchBody"
+            }
+          }
+        }
+      },
+      "MessagePatch": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PatchBody"
+            }
+          }
+        }
+      },
+      "MessageControlDataPatch": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PatchBody"
+            }
+          }
+        }
+      },
+      "File": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/File"
+            }
+          }
+        }
+      },
+      "DirectoryAdd": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DirectoryAdd"
+            }
+          }
+        }
+      },
+      "DirectoryPatch": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DirectoryPatch"
+            }
+          }
+        }
+      },
+      "SubscriptionCreate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SubscriptionCreate"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "MessageOperationResponse": {
+        "description": "Message response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MassageOperationResponseWrapper"
+            }
+          }
+        }
+      },
+      "MessageOperationResponseSinglePut": {
+        "description": "Message response with single message ID",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MassageOperationResponseSingleWrapperPut"
+            }
+          }
+        }
+      },
+      "MessageOperationResponsePost": {
+        "description": "Message response for POST message",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MassageOperationResponseMultiWrapperPost"
+            }
+          }
+        }
+      },
+      "SuccessResponse": {
+        "description": "Success response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SuccessInfo"
+            }
+          }
+        }
+      },
+      "Subscriptions": {
+        "description": "Subscriptions list response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Subscription"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "description": "Error response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ErrorInfo"
+              }
+            }
+          }
+        }
+      },
+      "DirectoriesGet": {
+        "description": "Directories list",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Directory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "oAuthUserAgent": {
+        "type": "oauth2",
+        "description": "Ten interfejs API używa OAuth 2.0 z przepływem authorizationCode.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://gov.pl/oauth2/authorize",
+            "tokenUrl": "https://gov.pl/oauth2/token",
+            "refreshUrl": "https://gov.pl/oauth2/refresh",
+            "scopes": {
+              "read_messages": "read messages",
+              "write_messages": "send messages",
+              "read_settings": "read settings",
+              "write_settings": "change settings"
+            }
+          }
+        }
+      }
+    }
+  }
+}

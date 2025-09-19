@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Search Engine API",
+    "version": "1.0.14",
+    "description": "<h1 style=\"color: #5e9ca0;\"><span style=\"color: #2b2301;\">Usługi biznesowe:</span></h1>\n<p><span style=\"color: #2b2301;\">&#8226; Wyszukiwanie danych</span></p>\n<p><span style=\"color: #2b2301;\"><strong><span class=\"opblock-summary-method\">POST </span></strong><span class=\"opblock-summary-path\" data-path=\"/search/bae_search\"><a class=\"nostyle\">​/search​/bae_search</a></span></span></p>\n <code>\n{\n  \"entityName\": \"PPP S.A.\",\n  \"officialIds\": [\n    {\n      \"id\": \"20740859045918\",\n      \"referenceRegistry\": \"KRS\"\n    }\n  ],\n  \"headquartersAddress\": {\n    \"country\": \"PL\",\n    \"postalCode\": \"00-711\",\n    \"city\": \"Warszawa\",\n    \"postalOffice\": \"Warszawa\"\n  }\n}\n</code>\n<code>\n{\n  \"name\": \"Anna\",\n  \"surname\": \"Nowak\",\n   \"officialIds\": [\n    {\n      \"id\": \"67030511883\",\n      \"referenceRegistry\": \"PESEL\"\n    }\n  ]\n}\n</code>\n<code>\n{\n  \"entityName\": \"Urząd Miasta Lublin\",\n  \"officialIds\": [\n    {\n      \"id\": \"22222859045918\",\n      \"referenceRegistry\": \"REGON\"\n    }\n  ],\n  \"headquartersAddress\": {\n    \"country\": \"PL\",\n    \"postalCode\": \"20-011\",\n    \"street\": \"Nałęczowska\",\n    \"city\": \"Lublin\",\n    \"postalOffice\": \"Lublin\"\n  }\n}\n</code>\n"
+  },
+  "paths": {
+    "/search/bae_search": {
+      "post": {
+        "summary": "BAE search.",
+        "tags": [
+          "Search Engine"
+        ],
+        "security": [
+          {
+            "oAuthSearchEngine": [
+              "content_filter"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ClientCert-Subject",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ClientCertSubject"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BaeSearchRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Status200Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/Status400Response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "requestBodies": {
+      "BaeSearchRequest": {
+        "description": "Bae Search Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BaeSearch"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Status200Response": {
+        "description": "Status 200 response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BaeSearchResponse"
+            }
+          }
+        }
+      },
+      "Status400Response": {
+        "description": "Status 400 response",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status400"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "BaeSearchResponse": {
+        "type": "object",
+        "properties": {
+          "baeSearchData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BaeSearchData"
+            }
+          },
+          "comment": {
+            "type": "string",
+            "description": "Komentarz",
+            "maxLength": 256
+          }
+        }
+      },
+      "BaeSearch": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "Nazwa podmiotu publicznego lub prywatnego",
+            "maxLength": 128
+          },
+          "name": {
+            "type": "string",
+            "description": "Imię",
+            "maxLength": 64
+          },
+          "surname": {
+            "type": "string",
+            "description": "Nazwisko",
+            "maxLength": 64
+          },
+          "professionalTitle": {
+            "type": "string",
+            "description": "Tytuł zawodowy dla zawodów zaufania lub komornika",
+            "maxLength": 256
+          },
+          "recipientEdas": {
+            "type": "array",
+            "description": "Lista adresów do doręczeń elektronicznych odbiorcy",
+            "items": {
+              "type": "string"
+            }
+          },
+          "senderEda": {
+            "type": "string",
+            "description": "Adres do doręczeń elektronicznych nadawcy"
+          },
+          "officialIds": {
+            "type": "array",
+            "description": "Lista identyfikatorów - PESEL,REGON, ...",
+            "items": {
+              "$ref": "#/components/schemas/OfficialId"
+            }
+          },
+          "correspondenceAddress": {
+            "$ref": "#/components/schemas/AddressData"
+          },
+          "headquartersAddress": {
+            "$ref": "#/components/schemas/AddressData"
+          }
+        }
+      },
+      "OfficialId": {
+        "required": [
+          "id",
+          "referenceRegistry"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id"
+          },
+          "referenceRegistry": {
+            "type": "string",
+            "description": "Rejestr referencyjny",
+            "example": "pesel, PESEL, regon, REGON, krs, KRS, nip, NIP, ue, UE"
+          }
+        }
+      },
+      "BaeSearchData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Imię",
+            "maxLength": 64
+          },
+          "surname": {
+            "type": "string",
+            "description": "Nazwisko",
+            "maxLength": 64
+          },
+          "professionalTitle": {
+            "type": "string",
+            "description": "Tytuł zawodowy dla zawodów zaufania lub komornika",
+            "maxLength": 256
+          },
+          "legalForm": {
+            "type": "string",
+            "description": "Oznaczenie formy prawnej"
+          },
+          "designatedOperator": {
+            "type": "boolean",
+            "description": "Wskazuje czy operator jest wyznaczony"
+          },
+          "address": {
+            "$ref": "#/components/schemas/EDeliveryAddressData"
+          },
+          "entityName": {
+            "type": "string",
+            "description": "Nazwa podmiotu publicznego lub prywatnego",
+            "maxLength": 128
+          },
+          "officialIds": {
+            "type": "array",
+            "description": "Lista identyfikatorów - PESEL,REGON, ...",
+            "items": {
+              "$ref": "#/components/schemas/OfficialId"
+            }
+          },
+          "headquartersAddress": {
+            "$ref": "#/components/schemas/AddressData"
+          },
+          "correspondenceAddress": {
+            "$ref": "#/components/schemas/AddressData"
+          },
+          "nipStatus": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "ReferenceRegistryEnum": {
+        "type": "string",
+        "enum": [
+          "pesel",
+          "regon",
+          "krs",
+          "nip",
+          "ue"
+        ],
+        "description": "Rejestr referencyjny",
+        "example": "pesel, regon, krs, nip, ue"
+      },
+      "AddressData": {
+        "type": "object",
+        "description": "headquarters address or correspondence address",
+        "required": [
+          "addressType"
+        ],
+        "properties": {
+          "addressType": {
+            "type": "string",
+            "readOnly": true,
+            "enum": [
+              "correspondence",
+              "headquarters"
+            ],
+            "description": "typ adresu"
+          },
+          "country": {
+            "type": "string",
+            "enum": [
+              "A1",
+              "AD",
+              "AE",
+              "AF",
+              "AG",
+              "AI",
+              "AL",
+              "AM",
+              "AN",
+              "AO",
+              "AQ",
+              "AR",
+              "AS",
+              "AT",
+              "AU",
+              "AW",
+              "AZ",
+              "BA",
+              "BB",
+              "BD",
+              "BE",
+              "BF",
+              "BG",
+              "BH",
+              "BI",
+              "BJ",
+              "BM",
+              "BN",
+              "BO",
+              "BR",
+              "BS",
+              "BT",
+              "BV",
+              "BW",
+              "BY",
+              "BZ",
+              "CA",
+              "CC",
+              "CD",
+              "CF",
+              "CG",
+              "CH",
+              "CI",
+              "CK",
+              "CL",
+              "CM",
+              "CN",
+              "CO",
+              "CR",
+              "CU",
+              "CV",
+              "CX",
+              "CY",
+              "CZ",
+              "DE",
+              "DJ",
+              "DK",
+              "DM",
+              "DO",
+              "DZ",
+              "EC",
+              "EE",
+              "EG",
+              "ER",
+              "ES",
+              "ET",
+              "FI",
+              "FJ",
+              "FK",
+              "FM",
+              "FR",
+              "GA",
+              "GB",
+              "GD",
+              "GE",
+              "GG",
+              "GH",
+              "GI",
+              "GM",
+              "GN",
+              "GQ",
+              "GR",
+              "GS",
+              "GT",
+              "GU",
+              "GW",
+              "GY",
+              "HK",
+              "HM",
+              "HN",
+              "HR",
+              "HT",
+              "HU",
+              "ID",
+              "IE",
+              "IL",
+              "IM",
+              "IN",
+              "IO",
+              "IQ",
+              "IR",
+              "IS",
+              "IT",
+              "JE",
+              "JM",
+              "JO",
+              "JP",
+              "KE",
+              "KG",
+              "KH",
+              "KI",
+              "KM",
+              "KN",
+              "KP",
+              "KR",
+              "KW",
+              "KY",
+              "KZ",
+              "LA",
+              "LB",
+              "LC",
+              "LI",
+              "LK",
+              "LR",
+              "LS",
+              "LT",
+              "LU",
+              "LV",
+              "LY",
+              "MA",
+              "MD",
+              "MG",
+              "MH",
+              "MK",
+              "ML",
+              "MM",
+              "MN",
+              "MO",
+              "MP",
+              "MR",
+              "MS",
+              "MT",
+              "MU",
+              "MV",
+              "MW",
+              "MX",
+              "MY",
+              "MZ",
+              "NA",
+              "NC",
+              "NE",
+              "NF",
+              "NG",
+              "NI",
+              "NL",
+              "NO",
+              "NP",
+              "NR",
+              "NU",
+              "NZ",
+              "OM",
+              "PA",
+              "PE",
+              "PF",
+              "PG",
+              "PH",
+              "PK",
+              "PL",
+              "PN",
+              "PS",
+              "PT",
+              "PW",
+              "PY",
+              "QA",
+              "RO",
+              "RU",
+              "RW",
+              "SA",
+              "SB",
+              "SC",
+              "SD",
+              "SE",
+              "SG",
+              "SH",
+              "SI",
+              "SK",
+              "SL",
+              "SM",
+              "SN",
+              "SO",
+              "SR",
+              "ST",
+              "SV",
+              "SY",
+              "SZ",
+              "TC",
+              "TD",
+              "TF",
+              "TG",
+              "TH",
+              "TJ",
+              "TK",
+              "TM",
+              "TN",
+              "TO",
+              "TR",
+              "TT",
+              "TV",
+              "TW",
+              "TZ",
+              "UA",
+              "UG",
+              "UM",
+              "US",
+              "UY",
+              "UZ",
+              "VA",
+              "VC",
+              "VE",
+              "VG",
+              "VI",
+              "VN",
+              "VU",
+              "W1",
+              "WF",
+              "WS",
+              "YE",
+              "YU",
+              "ZA",
+              "ZM",
+              "ZR",
+              "ZW"
+            ],
+            "description": "Organizacje międzynarodowe\nAndora\nZjednoczone Emiraty Arabskie\nAfganistan\nAntigua i Barbuda\nAnguilla\nAlbania\nArmenia\nAntyle Holenderskie\nAngola\nAntarktyka\nArgentyna\nSamoa Amerykańskie\nAustria\nAustralia\nAruba\nAzerbejdżan\nBośnia i Herzegowina\nBarbados\nBangladesz\nBelgia\nBurkina Faso\nBułgaria\nBahrajn\nBurundi\nBenin\nBermudy\nBrunei Darussalam\nBoliwia\nBrazylia\nBahamy\nBhutan\nBouveta, Wyspa\nBotswana\nBiałoruś\nBelize\nKanada\nKokosowe (Keelinga), Wyspy\nKongo, Republika Demokratyczna\nRepublika Środkowo-Afrykańska\nKongo\nSzwajcaria\nWybrzeże Kości Słoniowej\nCooka, Wyspy\nChile\nKamerun\nChiny\nKolumbia\nKostaryka\nKuba\nZielony Przylądek\nBożego Narodzenia, Wyspa\nCypr\nRepublika Czeska\nNiemcy\nDżibuti\nDania\nDominika\nRepublika Dominikany\nAlgieria\nEkwador\nEstonia\nEgipt\nErytrea\nHiszpania\nEtiopia\nFinlandia\nRepublika Fidżi\nFalklandy\nMikronezja, Federalne Stany\nFrancja\nGabon\nWielka Brytania\nGrenada\nGruzja\nGuernsey\nGhana\nGibraltar\nGambia\nGwinea\nGwinea Równikowa\nGrecja\nPołudniowa Georgia i Wyspy Południowe Sandwich\nGwatemala\nGuam\nGwinea Bissau\nGujana\nHong Kong\nHeart i McDonald, Wyspy\nHonduras\nChorwacja\nHaiti\nWęgry\nIndonezja\nIrlandia\nIzrael\nMan, Wyspa\nIndie\nBrytyjskie Terytorium Oceanu Indyjskiego\nIrak\nIran\nIslandia\nWłochy\nJersey\nJamajka\nJordania\nJaponia\nKenia\nKirgistan\nKambodża\nKiribati\nKomory\nSaint Kitts i Nevis\nKoreańska Republika Ludowo-Demokratyczna\nRepublika Korei\nKuwejt\nKajmany\nKazachstan\nLaos\nLiban\nSaint Lucia\nLichtenstein\nSri Lanka\nLiberia\nLesotho\nLitwa\nLuksemburg\nŁotwa\nLibia\nMaroko\nMołdowa\nMadagaskar\nMarshalla, Wyspy\nMacedonia\nMali\nMyanmar (Birma)\nMongolia\nMakao\nPółnocne Mariany\nMauretania\nMontserrat\nMalta\nMauritius\nMalediwy\nMalawi\nMeksyk\nMalezja\nMozambik\nNamibia\nNowa Kaledonia\nNiger\nNorfolk, Wyspa\nNigeria\nNikaragua\nNiderlandy\nNorwegia\nNepal\nNauru\nNiue\nNowa Zelandia\nOman\nPanama\nPeru\nPolinezja Francuska\nPapua - Nowa Gwinea\nFilipiny\nPakistan\nPolska\nPitcairn\nPalestyna, Obszar okupowany\nPortugalia\nPalau\nParagwaj\nKatar\nRumunia\nRosja\nRuanda\nArabia Saudyjska\nWyspy Salomona\nSeszele\nSudan\nSzwecja\nSingapur\nŚwięta Helena\nSłowenia\nSłowacja\nSierra Leone\nSan Marino\nSenegal\nSomalia\nSurinam\nWyspy Świętego Tomasza i Książęca\nSalwador\nSyria\nSuazi\nTurks i Caicos, Wyspy\nCzad\nFrancuskie Terytoria Południowe\nTogo\nTajlandia\nTadżykistan\nTokelau\nTurkmenistan\nTunezja\nTonga\nTurcja\nTrynidad i Tobago\nTuvalu\nTajwan\nTanzania\nUkraina\nUganda\nPowiernicze Wyspy Pacyfiku Stanów Zjednoczonych\nStany Zjednoczone\nUrugwaj\nUzbekistan\nWatykan\nSaint Vincent i Grenadyny\nWenezuela\nBrytyjskie Wyspy Dziewicze\nWyspy Dziewicze Stanów Zjednoczonych\nWietnam\nVanuatu\nGaza i Jerycho\nWallis i Futuna, Wyspy\nSamoa Zachodnie\nJemen\nJugosławia\nRepublika Południowej Afryki\nZambia\nZair\nZimbabwe\n"
+          },
+          "street": {
+            "type": "string",
+            "description": "Ulica",
+            "maxLength": 64
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Kod pocztowy"
+          },
+          "city": {
+            "type": "string",
+            "description": "Miasto",
+            "maxLength": 64
+          },
+          "buildingNumber": {
+            "type": "string",
+            "description": "Numer bloku",
+            "maxLength": 16
+          },
+          "streetNumberOrDomesticPremises": {
+            "type": "string",
+            "description": "Numer posesji lub ulicy, czyli to co jest na tabliczce z adresem na budynku",
+            "maxLength": 16
+          },
+          "flatNumber": {
+            "type": "string",
+            "description": "Numer mieszkania w budynkach wielorodzinnych",
+            "maxLength": 16
+          },
+          "typeOfStreet": {
+            "type": "string",
+            "enum": [
+              "street",
+              "avenue",
+              "plaza",
+              "square",
+              "boulevard",
+              "roundabout",
+              "park",
+              "market",
+              "route",
+              "road",
+              "estate",
+              "garden",
+              "island",
+              "coast",
+              "other"
+            ],
+            "description": "ulica\naleja\nplac\nskwer\nbulwar\nrondo\npark\nrynek\nszosa\ndroga\nosiedle\nogród\nwyspa\nwybrzeże\ninne\n"
+          },
+          "postalOffice": {
+            "type": "string",
+            "description": "Poczta",
+            "maxLength": 64
+          },
+          "postOfficeBox": {
+            "type": "string",
+            "description": "Numer skrytki pocztowej",
+            "maxLength": 64
+          },
+          "voivodeship": {
+            "type": "string",
+            "description": "Województwo",
+            "maxLength": 64
+          },
+          "district": {
+            "type": "string",
+            "description": "Powiat",
+            "maxLength": 64
+          },
+          "community": {
+            "type": "string",
+            "description": "Gmina",
+            "maxLength": 64
+          }
+        }
+      },
+      "Status400": {
+        "required": [
+          "error",
+          "error_description"
+        ],
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "description": "Kod błędu",
+            "example": "EDOR-VE"
+          },
+          "errorId": {
+            "type": "string",
+            "description": "Id błędu.",
+            "example": "7770c1c4-e07b-479d-a496-a69eb9488366"
+          },
+          "errorDescription": {
+            "type": "string",
+            "description": "Opis błędu",
+            "example": "Nie znaleziono aktywnego ADE nadawcy."
+          }
+        }
+      },
+      "EDeliveryAddressData": {
+        "properties": {
+          "ade": {
+            "type": "string",
+            "description": "Electronic delivery address"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isMainAddress": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EdaOwner": {
+        "properties": {
+          "organizationName": {
+            "type": "string",
+            "description": "Pełna nazwa podmiotu, zgodnie z wpisem w odpowiednim rejestrze, ewidencji, statucie lub innym dokumencie tego typu odpowiednim dla rodzaju podmiotu.",
+            "example": "Poczta Polska Spółka Akcyjna"
+          },
+          "organizationIdentifier": {
+            "type": "string",
+            "description": "Jeden z identyfikatorów podmiotu, np. NIP, KRS, REGON organizacji.",
+            "example": "VATPL-5250007313 lub NTRPL-0000334972"
+          },
+          "countryName": {
+            "type": "string",
+            "description": "Międzynarodowy skrót nazwy kraju.",
+            "example": "PL"
+          },
+          "stateOrProvinceName": {
+            "type": "string",
+            "description": "Nazwa województwa, w którym subskrybent ma swoją siedzibę.",
+            "example": "mazowieckie"
+          },
+          "localityName": {
+            "type": "string",
+            "description": "Nazwa miejscowości, w której subskrybent ma swoją siedzibę.",
+            "example": "Warszawa"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Kod pocztowy.",
+            "example": "00-940"
+          },
+          "streetAddress": {
+            "type": "string",
+            "description": "Nazwa ulicy, na której subskrybent ma swoją siedzibę.",
+            "example": "Rodziny Hiszpańskich"
+          },
+          "houseIdentifier": {
+            "type": "string",
+            "description": "Numer identyfikujący budynek, w którym subskrybent ma swoją siedzibę.",
+            "example": 8
+          }
+        }
+      },
+      "ClientCertSubject": {
+        "description": "DN certyfikatu użytkownika.",
+        "example": "C=PL,O=MSWIA,OU=SRP,CN=Jan Kowalski,SN=73081886298",
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "oAuthSearchEngine": {
+        "type": "oauth2",
+        "description": "This API uses OAuth 2.0 with authorizationCode flow.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://gov.pl/oauth2/authorize",
+            "tokenUrl": "https://gov.pl/oauth2/token",
+            "refreshUrl": "https://gov.pl/oauth2/refresh",
+            "scopes": {
+              "content_filter": "content filter"
+            }
+          }
+        }
+      }
+    }
+  }
+}
