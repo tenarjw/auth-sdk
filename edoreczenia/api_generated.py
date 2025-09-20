@@ -32,7 +32,7 @@ class ApiClient:
     else:  # https://ow.edoreczenia.gov.pl
       self.token_url = 'https://ow.edoreczenia.gov.pl/auth/realms/EDOR/protocol/openid-connect'
       self.api_url = 'https://ow.edoreczenia.gov.pl/auth/realms/EDOR/account'
-      self.pp_url = 'https://uaapi-ow.poczta-polska.pl/api/v1'
+      self.pp_url = 'https://uaapi-ow.poczta-polska.pl/api/v3'
       self.bae_url = 'https://ow.edoreczenia.gov.pl/api/se/v3'
       self.host = "https://ow.edoreczenia.gov.pl/"
     if self.access_token:

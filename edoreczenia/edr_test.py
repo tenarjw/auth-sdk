@@ -20,7 +20,8 @@ if __name__ == "__main__":
     exit(0)
   elif args.cmd == 'send':
     print('send')
-    test_send('ade','subject','body','att_filename','att_description')
+    test_send('AE:PL-xxxxxxxxxxxxxx','test','treść',
+              'requirements.txt','requirements.txt')
     exit(0)
   parser.print_help()
 

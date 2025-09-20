@@ -68,9 +68,7 @@ class MessageAddressData(BaseModel):
 
 
 class FileMetadata(BaseModel):
-    fileId: UUID = Field(
-        ..., description='UUID pliku', example='D41568F4-7175-42BB-9503-DAA282180D70'
-    )
+    fileId: Optional[UUID] = None # zmiana API
     filename: Optional[str] = Field(
         None, description='Nazwa pliku', example='document.pdf'
     )
@@ -173,7 +171,7 @@ class Attachment(BaseModel):
         description='UUID załącznika',
         example='D41568F4-7175-42BB-9503-DAA282180D70',
     )
-    file: Optional[File] = None
+    file: Optional[File] = None # poprawka
 
 
 class Type(Enum):
@@ -209,7 +207,7 @@ class Evidence(BaseModel):
         description='Czas zdarzenia dla potwierdzenia',
         example='2017-07-21T17:32:28.000Z',
     )
-    reasonDetails: Optional[str] = Field(None, description='Szczegóły powodu')
+    reasonDetails: Optional[List[str]] = Field(None, description='Szczegóły powodu') # zmiana
     reasonId: Optional[str] = Field(None, description='Numer identyfikacyjny powodu')
     externalData: Optional[str] = Field(
         None, description='URL do wygenerowanego pliku potwierdzenia'
@@ -217,7 +215,8 @@ class Evidence(BaseModel):
     downloaded: Optional[bool] = Field(
         None, description='Czy potwierdzenie było wcześniej pobrane'
     )
-    type: Optional[Type] = Field(None, description='Typ potwierdzenia - kod')
+    type: Optional[str] = Field(None, description='Typ potwierdzenia - kod')
+    #  poprawka - występują na przykład 'BPOP'
     from_: Optional[MessageAddressData] = Field(None, alias='from')
     to: Optional[MessageAddressData] = None
 
@@ -458,7 +457,7 @@ class FileWrapper(BaseModel):
     warning: Optional[str] = Field(
         None, description='Ostrzeżenie o przepełnieniu skrzynki'
     )
-    fileMetadata: Optional[FileMetadata] = None
+    file : Optional[FileMetadata] = None
 
 
 class EvidenceWrapper(BaseModel):
@@ -466,7 +465,8 @@ class EvidenceWrapper(BaseModel):
     warning: Optional[str] = Field(
         None, description='Ostrzeżenie o przepełnieniu skrzynki'
     )
-
+"""
+"""
 
 class MessageMetadata(BaseModel):
     from_: Optional[MessageAddressData] = Field(None, alias='from')

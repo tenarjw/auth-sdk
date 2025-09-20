@@ -330,13 +330,17 @@ class Edr():
                         )
     try:
       data = json.loads(response.text)
-      m=Message(**data)
+      if type(data)==list: # miana w API
+        m=Message(**data[0])
+      else:
+        m = Message(**data)
       return m
     except json.JSONDecodeError as e:
       raise ValueError(f"Błąd dekodowania JSON: {e}")
     except ValidationError as e:
       raise ValueError(f"Błąd walidacji modelu: {e}")
-
+    except Exception as e:
+      raise ValueError(f"Nieznany błąd modelu: {e}")
 
 
   def PobranieDowodowF(self, messageId, **kwargs):

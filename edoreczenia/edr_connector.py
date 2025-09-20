@@ -104,7 +104,7 @@ class EdrConnector():
         contentType='application/vnd.openxmlformats-officedocument.presentationml.presentation'
       else:
         contentType = att['contentType'] if 'contentType' in att else 'application/pdf'
-      metadata = FileMetadata(fileId=att['uuid'], \
+      metadata = FileMetadata( fileId=att['uuid'], \
                               filename=filename, \
                               contentType=contentType, \
                               description=att['description'] \
@@ -114,9 +114,11 @@ class EdrConnector():
       order+=1
     try:
       ret = self.edr.SendMessage(ade, subject, body, a)
-      msg = json.loads(ret.data)
+
       try:
-        return msg['Messages'][0]
+        msg = json.loads(ret.text)
+        return msg
+        # Przykład: '{"messageTaskId":"2153df8f-5f7c-4e7a-ae9c-e8c47add21cd"}'
       except:
         pass
       try:
@@ -210,7 +212,7 @@ def  list_inbox(test=False):
         if msg:
           for a in msg.attachments:
             data = {
-                "content": a.file.file.decode(),
+                #"content": a.file.file.decode(),
                 "name": a.file.fileMetadata.filename,
                 "description": a.file.fileMetadata.contentType,
               }
