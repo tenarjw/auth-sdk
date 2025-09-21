@@ -1,0 +1,15 @@
+---
+- name: Data na serwerach
+  hosts: example2
+  gather_facts: no
+  vars:
+    node_env: production
+
+  tasks:
+    - name: Wyświetl datę
+      command: date
+      register: date_out
+
+    - name: Pokaż wynik
+      debug:
+        var: date_out.stdout
