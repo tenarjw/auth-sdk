@@ -1,4 +1,3 @@
-# Using Debian 12 (Bookworm) as the base image
 FROM debian:12
 
 # Installing build dependencies for Python 3.12, libprimesieve-dev, curl, and locales
@@ -19,6 +18,14 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     locales \
     dialog \
+    # --- Pakiety do autoryzacji ---
+    systemctl \
+    nslcd \
+    libnss-ldapd \
+    libpam-ldapd \
+    sssd \
+    ldap-utils \
+    slapd \ 
     && rm -rf /var/lib/apt/lists/*
 
 # Configuring UTF-8 locale with Polish support
@@ -63,6 +70,14 @@ RUN ln -s /usr/local/bin/python3.12 /usr/local/bin/python
 #WORKDIR /app
 WORKDIR /examples
 COPY examples /examples
+COPY auth_scripts /auth_scripts
+
+# Kopiowanie skryptów konfiguracyjnych do autoryzacji
+COPY auth_scripts /auth_scripts
+RUN chmod +x /auth_scripts/*.sh
+
+#slapd
+CMD ["slapd","-d","0","-u","openldap","-g","openldap","-f","/etc/ldap/slapd.conf"]
 
 # Default command
 #CMD ["/bin/bash"]

@@ -1,0 +1,7 @@
+# -x Use simple authentication instead of SASL.
+# -y file - password from file
+ldapsearch -d 8 -x -H ldap://10.0.0.217 \
+  -w tajneHaslo87 -D cn=admin,dc=e,dc=int,dc=pwste,dc=edu,dc=pl \
+  -b  ou=Users,ou=edu,dc=e,dc=int,dc=pwste,dc=edu,dc=pl \
+   "uid=domadm1"
+
