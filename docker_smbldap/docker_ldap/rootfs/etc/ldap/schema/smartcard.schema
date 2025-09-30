@@ -1,0 +1,45 @@
+# definicja schematu dla zapamietania numeru karty ELS typ SmartCard 
+# dla systemu druku YSoft w PWSTE
+#
+# Dla karty sa przypisane dwa atrybuty
+# 1. Numer karty znaki HEX
+# 2. data wydania karty (opcja)
+#
+# Tworza one obieky SmartCardInfo ktoru jest dodawany do informacji o osobie
+# musi zawirac cn, sn
+#
+# prywatne OID dla tego schematu
+objectidentifier SmartCardSchemaOID 1.3.6.1.4.711784
+
+#string [20]
+attributetype ( SmartCardSchemaOID:1.1
+    NAME 'SCCardNumber'
+    DESC 'Smart Card Number'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    ORDERING caseIgnoreOrderingMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{20}
+    SINGLE-VALUE )
+# data
+attributetype ( SmartCardSchemaOID:1.2
+    NAME 'SCReleaseDate'
+    EQUALITY octetStringMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.40{10}
+    SINGLE-VALUE)
+
+attributetype ( SmartCardSchemaOID:1.3
+        NAME 'SCModifyLast'
+	DESC 'Timestamp of the last modify record'
+	EQUALITY integerMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+objectclass ( SmartCardSchemaOID:2.1
+    NAME 'SmartCard'
+    SUP top 
+    AUXILIARY
+    MAY (SCCardNumber $ SCReleaseDate $ SCModifyLast))
+
+#    MUST ( SCCardNumber  )
+#STRUCTURAL
+
+

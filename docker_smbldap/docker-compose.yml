@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  ldap:
+    build: ./docker_ldap
+    container_name: openldap
+    hostname: ldap.example.com
+    environment:
+      - LDAP_ORGANISATION=Example Inc
+      - LDAP_DOMAIN=example.com
+      - LDAP_ADMIN_PASSWORD=adminpassword
+    volumes:
+      - ./data/ldap:/var/lib/ldap
+      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif
+    networks:
+      - my-net
+
+  samba:
+    build: ./docker_samba
+    container_name: samba-ssh
+    hostname: samba.example.com
+    depends_on:
+      - ldap
+    ports:
+      - "139:139"
+      - "445:445"
+      - "2222:22"
+    volumes:
+      - ./share:/srv/samba/share
+    privileged: true
+    networks:
+      - my-net
+
+networks:
+  my-net:
