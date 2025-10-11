@@ -1,0 +1,41 @@
+KSeF.Client.Tests.CertTestApp – demonstracja procesu uwierzytelnienia XAdES
+Tryb wyjścia: screen
+[1] Przygotowanie NIP...
+    NIP: 9217964649 (losowy)
+[2] Pobieranie wyzwania (challenge) z KSeF...
+    Challenge: 20251011-CR-208730E000-5F2CB9C66C-C5
+[3] Budowanie AuthTokenRequest (builder)...
+[4] Serializacja żądania do XML (unsigned)...
+----- XML przed podpisem -----
+<?xml version="1.0" encoding="utf-8"?>
+<AuthTokenRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://ksef.mf.gov.pl/auth/token/2.0">
+  <Challenge>20251011-CR-208730E000-5F2CB9C66C-C5</Challenge>
+  <ContextIdentifier>
+    <Nip>9217964649</Nip>
+  </ContextIdentifier>
+  <SubjectIdentifierType>certificateSubject</SubjectIdentifierType>
+</AuthTokenRequest>
+----- KONIEC: XML przed podpisem -----
+
+[5] Generowanie samopodpisanego certyfikatu testowego (Utils)...
+    Certyfikat: G=A, SN=R, SERIALNUMBER=TINPL-9217964649, CN=A R, C=PL
+[6] Podpisywanie XML (XAdES)...
+----- XML po podpisie (XAdES) -----
+<?xml version="1.0" encoding="utf-8"?>
+<AuthTokenRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://ksef.mf.gov.pl/auth/token/2.0">
+  <Challenge>20251011-CR-208730E000-5F2CB9C66C-C5</Challenge>
+  <ContextIdentifier>
+    <Nip>9217964649</Nip>
+  </ContextIdentifier>
+  <SubjectIdentifierType>certificateSubject</SubjectIdentifierType>
+<Signature Id="Signature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" /><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><DigestValue>Z3WlVfVdJiMRxLoh0fKoO4r8xM/VmcbG4TKLRIdBbrE=</DigestValue></Reference><Reference URI="#SignedProperties" Type="http://uri.etsi.org/01903#SignedProperties"><Transforms><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><DigestValue>8Iqh5yj3difH8ryka9e9tyshNj/EpRNXaMLZhR/w4EI=</DigestValue></Reference></SignedInfo><SignatureValue>WCT0oFB30jfGEFcNp1DHeqnLSHp3ab6m9Ceq/jcLcd1/JiUzmjPBiVywhM0mlqQkVQJvHsc5iajZj21ah2nmqTIwWgQM4RvvzXZHsD7NNzc+ke3W+7iNjNzxWyjZ5RIASgWMBHsHhwKhqZAQC1JHmBpAfInVnks4bNipvuUqgg+e5nLkWEfEqkpjMZWUspgYAj+wuefAdzIW6+K0zyIG/yReV6e8iNVKLH8x3b+nDEBAAF1tQQ/4YjhvpHaQfVTGt/ETVWJ+fkIieIcHE+h1ovQMucjrLEHAaFB8iYD5vujJPY13z891d2pj8+NYbEASt9u7mew2VbG1FWlEwW/BVw==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIIDfTCCAjWgAwIBAgIJAModBXWSIU9jMD0GCSqGSIb3DQEBCjAwoA0wCwYJYIZIAWUDBAIBoRowGAYJKoZIhvcNAQEIMAsGCWCGSAFlAwQCAaIDAgEgME4xCzAJBgNVBAYTAlBMMQwwCgYDVQQDEwNBIFIxGTAXBgNVBAUTEFRJTlBMLTkyMTc5NjQ2NDkxCjAIBgNVBAQTAVIxCjAIBgNVBCoTAUEwHhcNMjUxMDExMDgyNzI5WhcNMjcxMDExMDkyODI5WjBOMQswCQYDVQQGEwJQTDEMMAoGA1UEAxMDQSBSMRkwFwYDVQQFExBUSU5QTC05MjE3OTY0NjQ5MQowCAYDVQQEEwFSMQowCAYDVQQqEwFBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtqHNvs6UL8blH9uzWgkBKKiadFaDbysVUSpDzJCwavGIJFKuvyqrNxisIMcgKEMhGngBZfHvdgNKmSBAFyz28APFgvC984cxRWmk67fpsUZGpnzf1MIEuFX9dfi3csHXETs2TBX40YyGwrn7y5VFIA4BqQyf+g1znDFGwpw8UTSDgtMKPSx15gSZjLq2iUWfBG33xFYnXlNWW5/RiVEQCQ2/jDyakDTM/+HcbC9QoWU8yOBiDY3gfLV6fMt9cvWbEMNXHUHEX7clcXvztBlikryO3G1niChCrtmzQ2wptfbgEFwzcHIVLPoYOznHi942MC03K6wTxiZoRCgYobFC8wIDAQABMD0GCSqGSIb3DQEBCjAwoA0wCwYJYIZIAWUDBAIBoRowGAYJKoZIhvcNAQEIMAsGCWCGSAFlAwQCAaIDAgEgA4IBAQBHfx8sh2lJM7Tu4JcaC2WjIm3RWJcA4z/3X9hHM4QDpbcCKVK9Snm/8GlAxgHDC+J/xZ6CmU04aPtdYsbKPnPrPGZXn2d95dLCH0WS120ran8jgdO/eiJJS31Iecdzy665l5sIvbPyhaUiKdPOjHjI8JCyp7J5nvFaVxl8G53+wlvu0lrWPkCR04dQNcMZqR9fMPcZ3H+xkh4zL/wXV6JjwgHvIYBhqvG4i1JJM/8HaMi5TXmC1rM5tafr32oWrgK/nupi2BjOLpCcX5AUFyrgAuHLNe4qPrDjofR+nIrnahmRc5qGtmBLcACo/SFk3liwn0CocJQl8oqUKLKl5Pfz</X509Certificate></X509Data></KeyInfo><Object><xades:QualifyingProperties Target="#Signature" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns="http://www.w3.org/2000/09/xmldsig#"><xades:SignedProperties Id="SignedProperties"><xades:SignedSignatureProperties><xades:SigningTime>2025-10-11T09:27:29.3547516+00:00</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" /><DigestValue>LUuorPrC5JyAVvaRx2PVYj8dil1sNZzbTsWC4JIZFkM=</DigestValue></xades:CertDigest><xades:IssuerSerial><X509IssuerName>G=A, SN=R, SERIALNUMBER=TINPL-9217964649, CN=A R, C=PL</X509IssuerName><X509SerialNumber>14563802772507021155</X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></Object></Signature></AuthTokenRequest>
+----- KONIEC: XML po podpisie (XAdES) -----
+
+[7] Wysyłanie podpisanego XML do KSeF...
+    ReferenceNumber: 20251011-AU-208799B000-813A9AF292-13
+[8] Odpytanie o status operacji uwierzytelnienia...
+      Status: 200 - Uwierzytelnianie zakończone sukcesem | upłynęło: 00:00
+[9] Pobieranie access token...
+    AccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXAiOiJDb250ZXh0VG9rZW4iLCJjaXQiOiJOaXAiLCJjaXYiOiI5MjE3OTY0NjQ5IiwiYXVtIjoiUXVhbGlmaWVkU2lnbmF0dXJlIiwiYXJuIjoiMjAyNTEwMTEtQVUtMjA4Nzk5QjAwMC04MTNBOUFGMjkyLTEzIiwic3VkIjoie1wic3ViamVjdElkZW50aWZpZXJcIjp7XCJ0eXBlXCI6XCJOaXBcIixcInZhbHVlXCI6XCI5MjE3OTY0NjQ5XCJ9LFwiZ2l2ZW5OYW1lXCI6XCJBXCIsXCJzdXJuYW1lXCI6XCJSXCIsXCJzZXJpYWxOdW1iZXJcIjpcIlRJTlBMLTkyMTc5NjQ2NDlcIixcImNvbW1vbk5hbWVcIjpcIkEgUlwiLFwiY291bnRyeU5hbWVcIjpcIlBMXCJ9IiwicGVyIjoiW1wiT3duZXJcIl0iLCJwZWMiOiJbXSIsInJvbCI6IltdIiwicGVwIjoiW10iLCJpb3AiOiJbXSIsImV4cCI6MTc2MDE3NTgwOSwiaWF0IjoxNzYwMTc0OTA5LCJpc3MiOiJrc2VmLWFwaS10ZSIsImF1ZCI6ImtzZWYtYXBpLXRlIn0.Buh54DdKOXbGeCkjA9s7P7uzxdkqXiRG39PXhsT4Yxs
+    RefreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXAiOiJSZWZyZXNoVG9rZW4iLCJhcm4iOiIyMDI1MTAxMS1BVS0yMDg3OTlCMDAwLTgxM0E5QUYyOTItMTMiLCJleHAiOjE3NjA3Nzk3MDksImlhdCI6MTc2MDE3NDkwOSwiaXNzIjoia3NlZi1hcGktdGUiLCJhdWQiOiJrc2VmLWFwaS10ZSJ9.oRkP9cNrJHmj9Fjunr_A3SYialC9xo-JodVkzaFAdUo
+Zakończono pomyślnie.
