@@ -16,40 +16,36 @@ from ksef2client.signing import sign_auth_request_with_xmlsec as sign_xades2
 
 
 def authenticate_with_certificate_ksef2(ksef_client: KSeFClient, certificate_path: str, password: str, nip: str):
-    """Poprawiona funkcja uwierzytelniania certyfikatem w KSeF 2.0."""
+    # Funkcja uwierzytelniania certyfikatem w KSeF 2.0.
     try:
-        # 1. Pobierz challenge
+        # 1Pobierz challenge
         print("1. Pobieranie challenge...")
         challenge_response = ksef_client.challenge()
         print(f"   Otrzymano challenge: {challenge_response.challenge}")
 
-        # 2. Przygotuj XML do podpisania
-        # POPRAWKA: Prawidłowa nazwa parametru to `identifier_value`
+        # Przygotuj XML do podpisania
         auth_request_xml = create_auth_request_xml2(
             challenge=challenge_response.challenge,
             identifier_type="Nip",
             identifier_value=nip
         )
 
-        # 3. Podpisz XML podpisem XAdES
+        # Podpisz XML podpisem XAdES
         print("2. Podpisywanie żądania XML...")
         signed_xml = sign_xades2(auth_request_xml, certificate_path, password)
 
-        # 4. Wyślij podpisany XML
+        # Wyślij podpisany XML
         print("3. Inicjowanie uwierzytelniania podpisem...")
         init_response = ksef_client.auth_by_xades_signature(signed_xml)
         print(f"   Numer referencyjny operacji: {init_response.referenceNumber}")
         
         temp_auth_token = init_response.authenticationToken.token
 
-        # 5. Sprawdzaj status operacji, aż do uzyskania statusu 200
+        # Sprawdzaj status operacji, aż do uzyskania statusu 200
         print("4. Sprawdzanie statusu operacji (oczekiwanie na kod 200)...")
         while True:
-            # POPRAWKA: Funkcja auth_status w kliencie została usunięta, użyj generycznej `status`
-            # i przekaż tymczasowy token w nagłówku.
             status_response = ksef_client.auth_status(init_response.referenceNumber, temp_auth_token)
             print(f"Aktualny status: {status_response.status.code} - {status_response.status.description}")
-            
             if status_response.status.code == 200:
                 break
             elif status_response.status.code >= 400:
@@ -58,14 +54,13 @@ def authenticate_with_certificate_ksef2(ksef_client: KSeFClient, certificate_pat
             
             time.sleep(2)
 
-        # 6. Wykup tokeny dostępowe
-        print("5. Uwierzytelnianie zakończone. Wykupywanie tokenów sesji...")
-        # POPRAWKA: `redeem_token` wymaga tylko `temp_auth_token`, numer referencyjny jest w tokenie
+        # Tokeny dostępowe
+        print("5. Uwierzytelnianie zakończone. Pobranie tokenów sesji...")
         tokens = ksef_client.redeem_token(temp_auth_token)
         
-        # 7. Ustaw główny token dostępu w kliencie
+        # Ustaw główny token dostępu w kliencie
         ksef_client.set_access_token(tokens.accessToken.token)
-        print("Tokeny pobrane. Token dostępu został ustawiony w kliencie.")
+        print("Tokeny pobrane.")
         
         return tokens
 
@@ -78,7 +73,7 @@ def authenticate_with_certificate_ksef2(ksef_client: KSeFClient, certificate_pat
         return None
 
 def get_mf_public_key(ksef_client: KSeFClient, usage: str = "SymmetricKeyEncryption") -> str:
-    """Pobiera i konwertuje aktualny klucz publiczny MF."""
+    # Pobiera i konwertuje aktualny klucz publiczny MF.
     try:
         public_keys = ksef_client.get_public_keys()
         for key in public_keys:
@@ -91,7 +86,7 @@ def get_mf_public_key(ksef_client: KSeFClient, usage: str = "SymmetricKeyEncrypt
         raise Exception(f"Błąd pobierania klucza publicznego MF: {e}")
 
 def convert_der_to_pem(der_data: bytes) -> str:
-    """Konwertuje certyfikat z formatu DER do PEM."""
+    # Konwertuje certyfikat z formatu DER do PEM.
     pem_data = base64.b64encode(der_data).decode('ascii')
     pem_lines = [f"-----BEGIN CERTIFICATE-----"]
     pem_lines.extend(pem_data[i:i + 64] for i in range(0, len(pem_data), 64))
@@ -99,11 +94,8 @@ def convert_der_to_pem(der_data: bytes) -> str:
     return "\n".join(pem_lines)
 
 def ksef2_open_online_session(ksef_client: KSeFClient, public_key_pem: str) -> tuple[OpenOnlineSessionResponse, bytes, bytes]:
-    """
-    Otwiera sesję online, wysyła żądanie do KSeF i zwraca odpowiedź serwera
-    oraz użyty klucz symetryczny i IV.
-    """
-    # POPRAWKA: Cała funkcja została przepisana, aby faktycznie wysyłać żądanie
+    #  Otwiera sesję online, wysyła żądanie do KSeF i zwraca odpowiedź serwera   oraz użyty klucz symetryczny i IV.
+
     symmetric_key = get_random_bytes(32)
     iv = get_random_bytes(16)
     
@@ -121,10 +113,8 @@ def ksef2_open_online_session(ksef_client: KSeFClient, public_key_pem: str) -> t
     return session_response, symmetric_key, iv
 
 def ksef2_send_invoice_in_session(ksef_client: KSeFClient, session_ref: str, invoice_data: bytes, symmetric_key: bytes, iv: bytes):
-    """
-    Szyfruje i wysyła fakturę w ramach już otwartej sesji, używając podanego klucza.
-    """
-    # POPRAWKA: Ta funkcja teraz używa klucza i IV z otwartej sesji, a nie generuje nowych
+    # Szyfruje i wysyła fakturę w ramach już otwartej sesji, używając podanego klucza.
+     # Używa klucza i IV z otwartej sesji
     
     # Szyfrowanie faktury z użyciem klucza sesji
     encrypted_content, _, _ = prepare_invoice_for_sending(invoice_data, symmetric_key, iv)
@@ -141,7 +131,7 @@ def ksef2_send_invoice_in_session(ksef_client: KSeFClient, session_ref: str, inv
 
 
 def test_send_invoice_flow(nip: str, invoice_path: str, certificate_path : str, password: str):
-    """Kompletny, poprawny przepływ uwierzytelniania i wysyłki faktury."""
+   # przepływ uwierzytelniania i wysyłki faktury.
     ksef = KSeFClient(base_url="https://ksef-test.mf.gov.pl")
     
     print("--- Krok 1: Uwierzytelnianie ---")
