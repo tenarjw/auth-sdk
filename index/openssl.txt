@@ -329,3 +329,5 @@ openssl pkeyutl -decrypt -inkey private.pem \
 #    -K "$(xxd -p -c 32 key.bin)" -iv "$(xxd -p -c 12 iv.bin)"
 
 ###########
+# informacje o certyfikacie w pfx:
+openssl pkcs12 -in $(pwd)/cert.pfx -nodes -passin pass:"<hasło>" | openssl x509 -noout -subject
