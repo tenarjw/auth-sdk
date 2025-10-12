@@ -1,0 +1,17 @@
+[ req ]
+default_bits = 3072
+distinguished_name = req_distinguished_name
+string_mask = utf8only
+req_extensions = v3_req
+oid_section = new_oids
+
+[ req_distinguished_name ]
+C = PL
+O = Kowalski sp. z o.o
+CN = Kowalski sp. z o.o
+
+[new_oids]
+organizationIdentifier = 2.5.4.97
+
+[v3_req]
+

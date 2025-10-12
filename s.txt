@@ -1,0 +1,7 @@
+docker_ansible
+docker_ca
+docker_ex
+docker_krb5smb
+docker_smbldap
+docker_vpn
+docker_xsecure

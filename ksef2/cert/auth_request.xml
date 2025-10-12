@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<AuthTokenRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://ksef.mf.gov.pl/auth/token/2.0">
+    <Challenge>20251012-CR-08001BB000-3F2403DC4E-26</Challenge>
+    <ContextIdentifier>
+        <Nip>1234567890</Nip>
+    </ContextIdentifier>
+    <SubjectIdentifierType>certificateSubject</SubjectIdentifierType>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="Signature">
+  <ds:SignedInfo>
+    <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+    <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+    <ds:Reference URI="">
+      <ds:Transforms>
+        <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      </ds:Transforms>
+      <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+      <ds:DigestValue/>
+    </ds:Reference>
+    <ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#SignedProperties">
+      <ds:Transforms>
+        <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      </ds:Transforms>
+      <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+      <ds:DigestValue/>
+    </ds:Reference>
+  </ds:SignedInfo>
+  <ds:SignatureValue/>
+  <ds:KeyInfo>
+    <ds:X509Data>
+      <ds:X509Certificate/>
+    </ds:X509Data>
+  </ds:KeyInfo>
+<ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#Signature">
+  <xades:SignedProperties Id="SignedProperties">
+    <xades:SignedSignatureProperties>
+      <xades:SigningTime>2025-10-12T02:23:59.949732+00:00</xades:SigningTime>
+      <xades:SigningCertificate>
+        <xades:Cert>
+          <xades:CertDigest>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <ds:DigestValue>r................=</ds:DigestValue>
+          </xades:CertDigest>
+          <xades:IssuerSerial>
+            <ds:X509IssuerName>2.5.4.97=VATPL-1234567890,CN=COPE SZAFIR - Kwalifikowany,O=Krajowa Izba Rozliczeniowa S.A.,C=PL</ds:X509IssuerName>
+            <ds:X509SerialNumber>000000000000000000000000000000000000000000000000</ds:X509SerialNumber>
+          </xades:IssuerSerial>
+        </xades:Cert>
+      </xades:SigningCertificate>
+    </xades:SignedSignatureProperties>
+  </xades:SignedProperties>
+</xades:QualifyingProperties></ds:Object></ds:Signature></AuthTokenRequest>

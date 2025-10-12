@@ -1,0 +1,1 @@
+xmlsec1 --sign --output auth_request_signed.xml --pkcs12 cert.pfx --pwd pass123 auth_request.xml
