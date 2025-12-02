@@ -1,3 +1,4 @@
+fastapi[standard]
 a2wsgi==1.10.10
 alembic==1.16.5
 annotated-types==0.7.0
