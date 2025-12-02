@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<saml2p:AuthnRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:eidas="http://eidas.europa.eu/saml-extensions" xmlns:naturalperson="http://eidas.europa.eu/attributes/naturalperson" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" AssertionConsumerServiceURL="{{ acs_url }}" Destination="https://int-podmiotyzewnetrzne.login.gov.pl/login/SingleSignOnService" ForceAuthn="true" ID="{{ authn_request_id }}" IssueInstant="{{ authn_request_issue_instant }}" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" ProviderName="{{ provider }}" Version="2.0">
+<saml2:Issuer>{{ issuer }}</saml2:Issuer>
+<saml2p:Extensions>
+<eidas:SPType>private</eidas:SPType>
+<eidas:RequestedAttributes>
+<eidas:RequestedAttribute FriendlyName="FamilyName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+<eidas:RequestedAttribute FriendlyName="FirstName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+<eidas:RequestedAttribute FriendlyName="DateOfBirth" Name="http://eidas.europa.eu/attributes/naturalperson/DateOfBirth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+<eidas:RequestedAttribute FriendlyName="PersonIdentifier" Name="http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+</eidas:RequestedAttributes>
+</saml2p:Extensions>
+<saml2p:NameIDPolicy AllowCreate="true" Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"/>
+<saml2p:RequestedAuthnContext Comparison="minimum">
+<saml2:AuthnContextClassRef>http://eidas.europa.eu/LoA/substantial</saml2:AuthnContextClassRef>
+</saml2p:RequestedAuthnContext>
+</saml2p:AuthnRequest>

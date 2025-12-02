@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"/>
+<soap:Body>
+<saml2p:LogoutRequest
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+xmlns:eidas="http://eidas.europa.eu/saml-extensions"
+xmlns:naturalperson="http://eidas.europa.eu/attributes/naturalperson"
+xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"
+xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+Destination="{{ destination }}"
+ID="{{ request_id }}"
+IssueInstant="{{ current_date }}"
+Version="2.0">
+<saml2:Issuer>{{ issuer }}</saml2:Issuer>
+<saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">{{ name_id }}</saml2:NameID>
+<saml2p:SessionIndex>{{ session_index }}</saml2p:SessionIndex>
+</saml2p:LogoutRequest>
+</soap:Body>
+</soap:Envelope>

@@ -1,0 +1,41 @@
+<saml2:Assertion xmlns:coi-naturalperson="http://coi.gov.pl/attributes/naturalperson"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:dsig11="http://www.w3.org/2009/xmldsig11#"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:naturalperson="http://eidas.europa.eu/attributes/naturalperson"
+    xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+    xmlns:xenc11="http://www.w3.org/2009/xmlenc11#" ID="ID-6d37bf52-0686-429a-bb02-1aea0b523d3d" IssueInstant="2025-11-24T06:04:01.106Z" Version="2.0">
+    <saml2:Issuer>int-podmiotyzewnetrzne.login.gov.pl</saml2:Issuer>
+    <saml2:Subject>
+        <saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">80072118364</saml2:NameID>
+        <saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+            <saml2:SubjectConfirmationData InResponseTo="ID-72a54a08-0a3d-4ab7-a26e-4e3cf83cfe54" NotOnOrAfter="2025-11-24T06:34:00.000Z" Recipient="https://api.e-talar.com/v2/et/acs"></saml2:SubjectConfirmationData>
+        </saml2:SubjectConfirmation>
+    </saml2:Subject>
+    <saml2:Conditions NotBefore="2025-11-24T06:04:01.106Z" NotOnOrAfter="2025-11-24T06:34:00.000Z">
+        <saml2:AudienceRestriction>
+            <saml2:Audience>e-talar.com</saml2:Audience>
+        </saml2:AudienceRestriction>
+    </saml2:Conditions>
+    <saml2:AuthnStatement AuthnInstant="2025-11-24T06:04:01.106Z" SessionIndex="ID-f9fac86a-ba97-4a20-9e4f-8a241fa66c4f">
+        <saml2:AuthnContext>
+            <saml2:AuthnContextClassRef>http://eidas.europa.eu/LoA/substantial</saml2:AuthnContextClassRef>
+            <saml2:AuthenticatingAuthority>mObywatel</saml2:AuthenticatingAuthority>
+        </saml2:AuthnContext>
+    </saml2:AuthnStatement>
+    <saml2:AttributeStatement>
+        <saml2:Attribute FriendlyName="FirstName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="naturalperson:CurrentGivenNameType">jerzy</saml2:AttributeValue>
+        </saml2:Attribute>
+        <saml2:Attribute FriendlyName="FamilyName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="naturalperson:CurrentFamilyNameType">wawro</saml2:AttributeValue>
+        </saml2:Attribute>
+        <saml2:Attribute FriendlyName="DateOfBirth" Name="http://eidas.europa.eu/attributes/naturalperson/DateOfBirth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="naturalperson:DateOfBirthType">1980-07-21</saml2:AttributeValue>
+        </saml2:Attribute>
+        <saml2:Attribute FriendlyName="PersonIdentifier" Name="http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+            <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="naturalperson:PersonIdentifierType">80072118364</saml2:AttributeValue>
+        </saml2:Attribute>
+    </saml2:AttributeStatement>
+</saml2:Assertion>

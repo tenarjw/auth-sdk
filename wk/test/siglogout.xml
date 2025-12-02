@@ -1,0 +1,35 @@
+<saml2p:LogoutRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Destination="https://int-podmiotyzewnetrzne.login.gov.pl/login-services/singleLogoutService" ID="ID-ff88870a-9ce2-43c8-b418-da203554aca3" IssueInstant="2025-11-24T08:18:05Z" Version="2.0"><saml2:Issuer>e-talar.com</saml2:Issuer><ds:Signature>
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
+<ds:Reference URI="#ID-ff88870a-9ce2-43c8-b418-da203554aca3">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"><InclusiveNamespaces xmlns="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="ds saml2 saml2p xenc"/></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+<ds:DigestValue>00t6bH/iHAs+dGyPRNGT3KwKflCRMjyGBHwxhTNz5LQ=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue>0LIrbFWxODWrnp+6mxIJRTt5H76XilmXU4PWRqwnwll2FmI6iOEhBiHyPv1pSyBlm1Qn1R0NFkcVtgD9OdrM+A==</ds:SignatureValue>
+<ds:KeyInfo>
+<ds:X509Data>
+<ds:X509Certificate>MIICujCCAaKgAwIBAgIICyTLszeO6RowDQYJKoZIhvcNAQELBQAwFzEVMBMGA1UE
+AwwMQ0FfSU5UX0xPR0lOMB4XDTI1MTAwMzE0MjAxM1oXDTI3MTAwMzE0MjAxM1ow
+WTEbMBkGA1UEAwwSZS10YWxhci5jb21fc2lnX2VjMTowOAYDVQQKDDFQb2RrYXJw
+YWNrYV9GdW5kYWNqYV9Xc3BpZXJhbmlhX0lubm93YWNqaV9HQUxJQ0VBMFkwEwYH
+KoZIzj0CAQYIKoZIzj0DAQcDQgAE0CBi1kosa/AxUmP5iBM0LKlQZeeGf2Hyioey
+aPqsKUaozHo8hUk8RdeYP89Sho/HlS82oFuPSNNgcIpiR5IS2qOBkjCBjzAJBgNV
+HRMEAjAAMB8GA1UdIwQYMBaAFKiJFfDqNMwVMWVWxUc5GQcb5hruMDUGA1UdHwQu
+MCwwKqAooCaGJGh0dHA6Ly9jcmwuZXB1YXAuZ292LnBsL0ludExvZ2luLmNybDAd
+BgNVHQ4EFgQUoywMLm27lepxGyoOE0R3njCW6jowCwYDVR0PBAQDAgeAMA0GCSqG
+SIb3DQEBCwUAA4IBAQCu2HvToTKxPBR+r1qXdz21/yo/nRHy6itYLJKiBY09s7jF
+1YiLs6tVEu9mIkQvCGlflDjeH7JONr4PKIea2OtX1M4L9HGTDjbOsqOkRPD8z3az
+Aa3+/3gfeJndIFIlua+q/CKmXNj50yhIwChpejUhVcp89od1vjVjJZe3ZJO3yzFA
+Y0dJruzuorHR12qrIgkTijuNdHNUQDiR9Dg22oI9f7iuMUEXhyTKj+LdVFXTqa8O
+ULLKZPhLk1wAvPbPQLyH4ukkoY6YAqsJC5rGRQtffChdP1tQBTxEYa82mbKboaxg
+LDoaoBEktQd5kBxLlm5z0qoDtq6/SEOw1EzY5coM
+</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+</ds:Signature><saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">80072118364</saml2:NameID><saml2p:SessionIndex>ID-f9fac86a-ba97-4a20-9e4f-8a241fa66c4f</saml2p:SessionIndex></saml2p:LogoutRequest>
