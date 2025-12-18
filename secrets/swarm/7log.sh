@@ -1,0 +1,1 @@
+docker service logs demo1_demo1 -f
