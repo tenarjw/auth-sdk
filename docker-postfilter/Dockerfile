@@ -51,7 +51,9 @@ RUN mkdir -p /etc/letsencrypt/live /var/log && \
 # Skrypty i konfiguracje
 COPY scripts/start.sh scripts/update-certs.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
-COPY postfix/main.cf.template postfix/master.cf /etc/postfix/
+COPY postfix/main.cf.template postfix/main.cf.template.test postfix/master.cf postfix/transport /etc/postfix/
+RUN mkdir -p /etc/postfix/sasl
+COPY postfix/sasl/smtpd.conf /etc/postfix/sasl/
 COPY amavis/15-content_filter_mode /etc/amavis/conf.d/
 COPY supervisord.conf /etc/supervisor/conf.d/
 COPY crontab /etc/cron.d/certbot-renew
@@ -77,6 +79,8 @@ RUN mkdir -p /var/log/syslog-ng && \
     chown syslog:adm /var/log/syslog-ng && \
     chmod 750 /var/log/syslog-ng
 
+# do testów - własny certyfikat
+COPY certs/mail.pem /etc/postfix/
 # root - domyślny, ale można zmienić na specyficznego usera dla procesów
 # wskazane ze względów bezpieczeństwa
 

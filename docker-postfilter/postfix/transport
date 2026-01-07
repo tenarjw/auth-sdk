@@ -1,0 +1,4 @@
+localhost discard: 
+localhost.localdomain discard:
+user@example.com    smtp:[smtp.office365.com]:587
+*                  :

@@ -64,9 +64,13 @@ smtpd_data_restrictions =
     
 # TLS
 smtp_tls_security_level = encrypt
+
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
-smtpd_tls_cert_file = /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
-smtpd_tls_key_file = /etc/letsencrypt/live/${DOMAIN}/privkey.pem
+#smtpd_tls_cert_file = /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+#smtpd_tls_key_file = /etc/letsencrypt/live/${DOMAIN}/privkey.pem
+smtpd_tls_cert_file = /etc/postfix/mail.pem
+smtpd_tls_key_file = /etc/postfix/mail.pem
+
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 tls_random_source = dev:/dev/urandom
@@ -85,16 +89,15 @@ body_checks_size_limit = 102400
 
 # SASL
 smtp_sasl_auth_enable = yes
+#smtp_sasl_password_maps = static:user@example.com:password
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+
 smtpd_sasl_auth_enable = yes
 # SASL Cyrus
 smtpd_sasl_type = cyrus
 smtpd_sasl_path = smtpd
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain = $myhostname
-
-#smtp_sasl_password_maps = static:usser@example.com:password
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 
 # poziom logowania
 smtpd_tls_loglevel = 2

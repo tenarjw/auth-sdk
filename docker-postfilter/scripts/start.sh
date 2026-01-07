@@ -24,7 +24,11 @@ rm -f /var/run/clamav/clamd.ctl
 rm -f /var/run/spamd.pid
 
 # Przetworzenie konfiguracji
-envsubst < /etc/postfix/main.cf.template > /etc/postfix/main.cf
+if [ "${TEST_MODE}" != "true" ]; then
+  envsubst < /etc/postfix/main.cf.template > /etc/postfix/main.cf
+else
+  envsubst < /etc/postfix/main.cf.template.test > /etc/postfix/main.cf
+fi
 envsubst < /etc/opendkim.conf > /etc/opendkim.conf.tmp && mv /etc/opendkim.conf.tmp /etc/opendkim.conf
 
 # NAPRAWA UPRAWNIEŃ 
@@ -107,5 +111,11 @@ chown amavis:amavis /etc/amavis/conf.d/05-node_id
 # Plik musi należeć do root, nie do amavis
 chown root:root /etc/amavis/conf.d/05-node_id
 chmod 644 /etc/amavis/conf.d/05-node_id
+
+
+# Tworzenie bazy użytkowników SASL z hasłem
+echo "${SASL_PASS}" | saslpasswd2 -c -u "${DOMAIN}" -p "${SASL_USER}"
+chown postfix /etc/sasldb2
+chmod 600 /etc/sasldb2
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
