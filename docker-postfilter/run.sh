@@ -2,7 +2,7 @@ docker stop postfilter
 docker rm postfilter
 
 docker run -it --log-opt mode=non-blocking --log-opt max-buffer-size=4m \
-    --security-opt label=enable -p 25:25 -p 587:587 -p 465:465 -p 80:8081 -d -t --name postfilter \
+    --security-opt label=enable -p 25:25 -p 587:587 -p 80:8081 -d -t --name postfilter \
     -e DOMAIN=twojadomena.com \
     -e HOSTNAME=mail.twojadomena.com \
     -e MY_HOSTNAME=mail.twojadomena.com \
@@ -14,4 +14,4 @@ docker run -it --log-opt mode=non-blocking --log-opt max-buffer-size=4m \
     -e LETSENCRYPT_EMAIL=admin@twojadomena.com \
     postfilter:latest
 
-# Lub smtp-relay.gmail.com
+# Lub RELAY_HOST=smtp-relay.gmail.com

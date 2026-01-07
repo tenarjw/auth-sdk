@@ -16,17 +16,63 @@ milter_default_action = accept
 smtpd_milters = inet:localhost:8891
 non_smtpd_milters = $smtpd_milters
 
-# Pozostałe restrykcje i relay
+# relay
 relayhost = [${RELAY_HOST}]:${RELAY_PORT}
-smtp_sasl_auth_enable = yes
-smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+
+# restrykcje
+# Główna kontrola relay – kto może wysyłać pocztę do zewnętrznych domen
+smtpd_relay_restrictions = 
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    defer_unauth_destination
+
+# Kontrola klienta (IP, pipelining, rate limiting itp.)
+smtpd_client_restrictions = 
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_pipelining,
+    # opcjonalnie: sleep 1 jeśli chcesz spowalniać boty
+    # check_client_access hash:/etc/postfix/client_access
+
+# Wymagania HELO/EHLO
+smtpd_helo_restrictions = 
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_non_fqdn_helo_hostname,
+    reject_invalid_helo_hostname,
+    reject_unknown_helo_hostname   # opcjonalnie, ale zalecane
+
+# Kontrola nadawcy (sender)
+smtpd_sender_restrictions = 
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_non_fqdn_sender,
+    reject_unknown_sender_domain,
+    # opcjonalnie: reject_rhsbl_sender dblacklist.example.com
+
+# Kontrola odbiorcy i końcowa decyzja o przyjęciu maila
+smtpd_recipient_restrictions = 
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unknown_recipient_domain,
+    reject_unauth_destination,
+    # opcjonalnie dodatkowe RBL: reject_rbl_client zen.spamhaus.org
+
+# Opcjonalnie: restrykcje po DATA
+smtpd_data_restrictions = 
+    reject_unauth_pipelining
+    
+# TLS
 smtp_tls_security_level = encrypt
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
-
 smtpd_tls_cert_file = /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
 smtpd_tls_key_file = /etc/letsencrypt/live/${DOMAIN}/privkey.pem
 smtpd_tls_security_level = may
-smtpd_sasl_auth_enable = yes
+smtpd_tls_auth_only = yes
+tls_random_source = dev:/dev/urandom
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+
 
 # przekierowanie
 transport_maps = hash:/etc/postfix/transport
@@ -34,10 +80,28 @@ transport_maps = hash:/etc/postfix/transport
 # Bezpieczeństwo - rate limiting
 smtpd_client_connection_rate_limit = 10
 smtpd_client_message_rate_limit = 5
+body_checks_size_limit = 102400
 
 
-# obsługa SASL Cyrus (bez Dovecota)B
+# SASL
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtpd_sasl_auth_enable = yes
+# SASL Cyrus
 smtpd_sasl_type = cyrus
 smtpd_sasl_path = smtpd
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_local_domain = $myhostname
+
+# poziom logowania
+smtpd_tls_loglevel = 2
+
+# inne 
+smtpd_tls_session_cache_timeout = 3600s
+
+###################### nieaktualne
+# smtpd_use_tls = yes # przestarzałe - używamy  smtpd_tls_security_level
+# smtp_use_tls = yes  # przestarzałe - używamy  smtpd_tls_security_level
+# smtpd_sasl_type = dovecot # wybrany cyrus
+# ? smtpd_sasl_authenticated_header = yes
+# ? header_checks = regexp:/etc/postfix/header_checks

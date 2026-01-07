@@ -3,6 +3,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
     syslog-ng \
     postfix \
+    sasl2-bin libsasl2-modules \
     spamassassin \
     clamav \
     clamav-daemon \
