@@ -1,0 +1,31 @@
+# amavis/50-user
+
+use strict;
+
+# Definicje bypass dla wirusów i spamu (brakujące w oryginalnej konfiguracji)
+%bypass_virus_checks = (
+   'example.com' => 1,  # Bypass dla Twojej domeny
+);
+
+@bypass_virus_checks_acl = (
+   '127.0.0.1',  # Lokalny host
+);
+
+$bypass_virus_checks_re = qr/^local:/i;  # Regex dla lokalnych adresów
+
+%bypass_spam_checks = (
+   'trusted.com' => 1,  # Przykładowa zaufana domena
+);
+
+@bypass_spam_checks_acl = (
+   '192.168.0.0/16',  # Przykładowa sieć zaufana
+);
+
+$bypass_spam_checks_re = qr/^internal:/i;
+
+# Dodatkowe ustawienia Amavis (optymalizacja)
+$max_servers = 1;  # Liczba procesów Amavis (dostosuj do zasobów)
+$max_requests = 20;  # Maks. żądań na proces
+
+1;  # ensure a defined return
+

@@ -1,0 +1,75 @@
+# ==========================================================================
+# service type  private unpriv  chroot  wakeup  maxproc command + args
+#               (yes)   (yes)   (no)    (never) (100)
+# ==========================================================================
+
+# Główny proces SMTP (Port 25)
+smtp      inet  n       -       y       -       -       smtpd
+
+# Submission service (Port 587) dla klientów poczty 
+#submission inet n       -       y       -       -       smtpd
+submission inet n       -       n       -       -       smtpd
+    -o syslog_name=postfix/submission
+    -o smtpd_tls_security_level=encrypt
+    -o smtpd_sasl_auth_enable=yes
+    -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+    -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
+    -o milter_macro_daemon_name=ORIGINATING
+
+# Serwis dla Amavis (Content Filter) 
+smtp-amavis  unix  -    -       n       -       2       smtp
+    -o smtp_data_done_timeout=1200
+    -o smtp_send_xforward_command=yes
+    -o disable_dns_lookups=yes
+    -o max_use=20
+
+# Port zwrotny z Amavis do Postfixa
+127.0.0.1:10025 inet n  -       n       -       -       smtpd
+    -o content_filter=
+    -o local_recipient_maps=
+    -o relay_recipient_maps=
+    -o smtpd_restriction_classes=
+    -o smtpd_client_restrictions=
+    -o smtpd_helo_restrictions=
+    -o smtpd_sender_restrictions=
+    -o smtpd_recipient_restrictions=permit_mynetworks,reject
+    -o mynetworks=127.0.0.0/8
+    -o strict_rfc821_envelopes=yes
+    -o smtpd_error_sleep_time=0
+    -o smtpd_soft_error_limit=1001
+    -o smtpd_hard_error_limit=1000
+    -o smtpd_client_connection_count_limit=0
+    -o smtpd_client_connection_rate_limit=0
+    -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks,no_milters
+
+# Serwis zarządzania kluczami TLS (wymagany do działania TLS)
+tlsmgr    unix  -       -       y       1000?   1       tlsmgr
+
+# Opcjonalnie: Wsparcie dla tlsproxy (przydatne przy dużym ruchu)
+tlsproxy  unix  -       -       y       -       0       tlsproxy
+dnsblog   unix  -       -       y       -       0       dnsblog
+
+# Serwisy systemowe Postfix
+postlog   unix-dgram n  -       n       -       1       postlogd
+pickup    unix      n  -       y       60      1       pickup
+cleanup   unix      n  -       y       -       0       cleanup
+qmgr      unix      n  -       n       300     1       qmgr
+rewrite   unix      -  -       y       -       -       trivial-rewrite
+bounce    unix      -  -       y       -       0       bounce
+defer     unix      -  -       y       -       0       bounce
+trace     unix      -  -       y       -       0       bounce
+verify    unix      -  -       y       -       1       verify
+flush     unix      n  -       y       1000?   0       flush
+proxymap  unix      -  -       n       -       -       proxymap
+proxywrite unix     -  -       n       -       1       proxymap
+smtp      unix      -  -       y       -       -       smtp
+relay     unix      -  -       y       -       -       smtp
+showq     unix      n  -       y       -       -       showq
+error     unix      -  -       y       -       -       error
+retry     unix      -  -       y       -       -       error
+discard   unix      -  -       y       -       -       discard
+local     unix      -  n       n       -       -       local
+virtual   unix      -  n       n       -       -       virtual
+lmtp      unix      -  -       y       -       -       lmtp
+anvil     unix      -  -       y       -       1       anvil
+scache    unix      -  -       y       -       1       scache

@@ -1,0 +1,2 @@
+# Uruchamiaj renew codziennie o 00:00 i 12:00 (random delay do 43200s by uniknąć peak load na Let's Encrypt)
+0 0,12 * * * root certbot renew --quiet --post-hook "postfix reload" >/proc/1/fd/1 2>/proc/1/fd/2
