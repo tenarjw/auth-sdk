@@ -63,7 +63,8 @@ smtpd_data_restrictions =
     reject_unauth_pipelining
     
 # TLS
-smtp_tls_security_level = encrypt
+# amavis nie obsługuje smtp_tls_security_level = encrypt
+smtp_tls_security_level = may
 
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 #smtpd_tls_cert_file = /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
