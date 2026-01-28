@@ -5,6 +5,10 @@
 # https://pypi.org/project/datamodel-code-generator/
 # pip install datamodel-code-generator
 # datamodel-codegen --url https://ksef-test.mf.gov.pl/docs/v2/openapi.json --input-file-type openapi --output-model-type pydantic_v2.BaseModel --output src/ksef_client/models2.py
+# zmiana 28 stycznia 2026 - spowodowana radosną twórczością MF,,,
+# zamieniam extra='forbid' na extra='ignore',
+# JW 
+
 
 from __future__ import annotations
 
@@ -17,7 +21,7 @@ from pydantic import AnyUrl, AwareDatetime, BaseModel, ConfigDict, Field, conint
 
 class AllowedIps(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ip4Addresses: Optional[List[str]] = Field(
         None,
@@ -40,21 +44,21 @@ class AmountType(Enum):
 
 class AttachmentPermissionGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str
 
 
 class AttachmentPermissionRevokeRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str
 
 
 class AuthenticationChallengeResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     challenge: str = Field(..., description='Unikalny challenge.')
     timestamp: AwareDatetime = Field(..., description='Czas wygenerowania challenge-a.')
@@ -87,7 +91,7 @@ class AuthenticationTokenStatus(Enum):
 
 class AuthorizationPolicy(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     allowedIps: Optional[AllowedIps] = Field(
         None, description='Lista dozwolonych adresów IP.'
@@ -96,7 +100,7 @@ class AuthorizationPolicy(BaseModel):
 
 class BatchFilePartInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ordinalNumber: conint(ge=1) = Field(
         ..., description='Numer sekwencyjny części pliku paczki.'
@@ -114,7 +118,7 @@ class BatchFilePartInfo(BaseModel):
 
 class BatchSessionContextLimitsOverride(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxInvoiceSizeInMib: conint(ge=0, le=5) = Field(
         ..., description='Maksymalny rozmiar faktury w MiB.'
@@ -130,7 +134,7 @@ class BatchSessionContextLimitsOverride(BaseModel):
 
 class BatchSessionEffectiveContextLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxInvoiceSizeInMib: conint(ge=0) = Field(
         ..., description='Maksymalny rozmiar faktury w MiB.'
@@ -153,14 +157,14 @@ class BuyerIdentifierType(Enum):
 
 class CertificateEffectiveSubjectLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxCertificates: Optional[int] = None
 
 
 class CertificateEnrollmentDataResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     commonName: str = Field(..., description='Nazwa powszechna.')
     countryName: str = Field(..., description='Kraj, kod ISO 3166.')
@@ -176,7 +180,7 @@ class CertificateEnrollmentDataResponse(BaseModel):
 
 class CertificateLimit(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     remaining: int = Field(..., description='Pozostała wartość limitu.')
     limit: int = Field(
@@ -186,7 +190,7 @@ class CertificateLimit(BaseModel):
 
 class CertificateLimitsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     canRequest: bool = Field(
         ...,
@@ -223,14 +227,14 @@ class CertificateSubjectIdentifierType(Enum):
 
 class CertificateSubjectLimitsOverride(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxCertificates: Optional[conint(ge=0)] = None
 
 
 class CheckAttachmentPermissionStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     isAttachmentAllowed: Optional[bool] = Field(
         None,
@@ -436,7 +440,7 @@ class CurrencyCode(Enum):
 
 class EncryptionInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     encryptedSymmetricKey: str = Field(
         ...,
@@ -450,7 +454,7 @@ class EncryptionInfo(BaseModel):
 
 class EnrollCertificateResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(
         ...,
@@ -463,14 +467,14 @@ class EnrollCertificateResponse(BaseModel):
 
 class EnrollmentEffectiveSubjectLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxEnrollments: Optional[int] = None
 
 
 class EnrollmentSubjectLimitsOverride(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxEnrollments: Optional[conint(ge=0)] = None
 
@@ -556,7 +560,7 @@ class EuEntityPermissionsQueryPermissionType(Enum):
 
 class EuEntityPermissionsQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     vatUeIdentifier: Optional[str] = Field(
         None, description='Identyfikator podmiotu unijnego.'
@@ -575,7 +579,7 @@ class EuEntityPermissionsSubjectIdentifierType(Enum):
 
 class ExceptionDetails(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     exceptionCode: Optional[int] = None
     exceptionDescription: Optional[str] = None
@@ -584,7 +588,7 @@ class ExceptionDetails(BaseModel):
 
 class ExceptionInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     exceptionDetailList: Optional[List[ExceptionDetails]] = None
     referenceNumber: Optional[str] = None
@@ -596,14 +600,14 @@ class ExceptionInfo(BaseModel):
 
 class ExceptionResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     exception: Optional[ExceptionInfo] = None
 
 
 class ExportInvoicesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     operationReferenceNumber: str = Field(
         ..., description='Numer referencyjny operacji.'
@@ -612,7 +616,7 @@ class ExportInvoicesResponse(BaseModel):
 
 class FormCode(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     systemCode: str = Field(..., description='Kod systemowy')
     schemaVersion: str = Field(..., description='Wersja schematu')
@@ -621,7 +625,7 @@ class FormCode(BaseModel):
 
 class GenerateTokenResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: Optional[str] = Field(
         None,
@@ -648,7 +652,7 @@ class IndirectPermissionsTargetIdentifierType(Enum):
 
 class InvoiceMetadataAuthorizedSubject(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str = Field(..., description='Nip podmiotu upoważnionego')
     name: Optional[str] = Field(None, description='Nazwa podmiotu upoważnionego.')
@@ -657,7 +661,7 @@ class InvoiceMetadataAuthorizedSubject(BaseModel):
 
 class InvoiceMetadataBuyerIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: BuyerIdentifierType = Field(
         ...,
@@ -668,7 +672,7 @@ class InvoiceMetadataBuyerIdentifier(BaseModel):
 
 class InvoiceMetadataSeller(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str = Field(..., description='Nip sprzedawcy.')
     name: Optional[str] = Field(None, description='Nazwa sprzedawcy.')
@@ -676,7 +680,7 @@ class InvoiceMetadataSeller(BaseModel):
 
 class InvoicePackagePart(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ordinalNumber: conint(ge=1) = Field(
         ..., description='Numer sekwencyjny pliku części paczki.'
@@ -717,7 +721,7 @@ class InvoicePermissionType(Enum):
 
 class InvoiceQueryAmount(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: AmountType
     from_: Optional[float] = Field(None, alias='from')
@@ -726,7 +730,7 @@ class InvoiceQueryAmount(BaseModel):
 
 class InvoiceQueryBuyerIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: BuyerIdentifierType = Field(
         ...,
@@ -781,7 +785,7 @@ class KsefCertificateType(Enum):
 
 class OnlineSessionContextLimitsOverride(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxInvoiceSizeInMib: conint(ge=0, le=5) = Field(
         ..., description='Maksymalny rozmiar faktury w MiB.'
@@ -797,7 +801,7 @@ class OnlineSessionContextLimitsOverride(BaseModel):
 
 class OnlineSessionEffectiveContextLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     maxInvoiceSizeInMib: conint(ge=0) = Field(
         ..., description='Maksymalny rozmiar faktury w MiB.'
@@ -813,7 +817,7 @@ class OnlineSessionEffectiveContextLimits(BaseModel):
 
 class OpenOnlineSessionRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     formCode: FormCode = Field(
         ...,
@@ -827,7 +831,7 @@ class OpenOnlineSessionRequest(BaseModel):
 
 class OpenOnlineSessionResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(..., description='Numer referencyjny sesji.')
     validUntil: AwareDatetime = Field(
@@ -838,7 +842,7 @@ class OpenOnlineSessionResponse(BaseModel):
 
 class PartUploadRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ordinalNumber: conint(ge=1) = Field(
         ..., description='Numer sekwencyjny części pliku paczki.'
@@ -858,7 +862,7 @@ class PartUploadRequest(BaseModel):
 
 class PeppolProvider(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: Optional[str] = Field(None, description='Identyfikator dostawcy usług Peppol.')
     name: Optional[str] = Field(None, description='Nazwa dostawcy usług Peppol.')
@@ -871,7 +875,7 @@ class PermissionState(Enum):
 
 class PermissionsOperationResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     operationReferenceNumber: str = Field(
         ...,
@@ -881,7 +885,7 @@ class PermissionsOperationResponse(BaseModel):
 
 class PersonCreateRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str
     pesel: str
@@ -946,7 +950,7 @@ class PersonPermissionsTargetIdentifierType(Enum):
 
 class PersonRemoveRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     nip: str
 
@@ -996,7 +1000,7 @@ class PublicKeyCertificateUsage(Enum):
 
 class QueryCertificatesRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificateSerialNumber: Optional[str] = Field(
         None,
@@ -1021,7 +1025,7 @@ class QueryCertificatesRequest(BaseModel):
 
 class QueryPeppolProvidersResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     peppolProviders: List[PeppolProvider] = Field(
         ..., description='Lista dostawców usług Peppol.'
@@ -1038,7 +1042,7 @@ class QueryType(Enum):
 
 class RetrieveCertificatesListItem(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificate: str = Field(
         ..., description='Certyfikat w formacie DER zakodowany w Base64.'
@@ -1053,7 +1057,7 @@ class RetrieveCertificatesListItem(BaseModel):
 
 class RetrieveCertificatesRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificateSerialNumbers: List[str] = Field(
         ..., description='Numery seryjne certyfikatów do pobrania.'
@@ -1062,7 +1066,7 @@ class RetrieveCertificatesRequest(BaseModel):
 
 class RetrieveCertificatesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificates: List[RetrieveCertificatesListItem] = Field(
         ..., description='Pobrane certyfikaty.'
@@ -1071,7 +1075,7 @@ class RetrieveCertificatesResponse(BaseModel):
 
 class RevokeCertificateRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     revocationReason: Optional[CertificateRevocationReason] = Field(
         None,
@@ -1081,7 +1085,7 @@ class RevokeCertificateRequest(BaseModel):
 
 class SendInvoiceRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     invoiceHash: str = Field(
         ...,
@@ -1114,7 +1118,7 @@ class SendInvoiceRequest(BaseModel):
 
 class SendInvoiceResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(..., description='Numer referencyjny faktury.')
 
@@ -1126,7 +1130,7 @@ class SessionType(Enum):
 
 class SetSessionLimitsRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     onlineSession: OnlineSessionContextLimitsOverride = Field(
         ..., description='Limity dla sesji interaktywnych.'
@@ -1138,7 +1142,7 @@ class SetSessionLimitsRequest(BaseModel):
 
 class StatusInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     code: int = Field(..., description='Kod statusu')
     description: constr(min_length=1) = Field(..., description='Opis statusu')
@@ -1156,7 +1160,7 @@ class SubjectIdentifierType(Enum):
 
 class SubjectRemoveRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectNip: str
 
@@ -1178,7 +1182,7 @@ class SubordinateRoleSubordinateEntityIdentifierType(Enum):
 
 class Subunit(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectNip: str
     description: str
@@ -1246,7 +1250,7 @@ class TokenAuthorIdentifierType(Enum):
 
 class TokenAuthorIdentifierTypeIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: TokenAuthorIdentifierType = Field(
         ...,
@@ -1264,7 +1268,7 @@ class TokenContextIdentifierType(Enum):
 
 class TokenContextIdentifierTypeIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: TokenContextIdentifierType = Field(
         ...,
@@ -1275,7 +1279,7 @@ class TokenContextIdentifierTypeIdentifier(BaseModel):
 
 class TokenInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     token: str = Field(..., description='Token w formacie JWT.')
     validUntil: AwareDatetime = Field(..., description='Data ważności tokena.')
@@ -1292,7 +1296,7 @@ class TokenPermissionType(Enum):
 
 class TokenStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: Optional[str] = Field(
         None, description='Numer referencyjny tokena.'
@@ -1326,7 +1330,7 @@ class TokenStatusResponse(BaseModel):
 
 class UpoPageResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(..., description='Numer referencyjny strony UPO.')
     downloadUrl: AnyUrl = Field(..., description='Adres do pobrania strony UPO.')
@@ -1334,14 +1338,14 @@ class UpoPageResponse(BaseModel):
 
 class UpoResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     pages: List[UpoPageResponse] = Field(..., description='Lista stron UPO.')
 
 
 class AuthenticationContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: AuthenticationContextIdentifierType = Field(
         ..., description='Typ identyfikatora'
@@ -1351,7 +1355,7 @@ class AuthenticationContextIdentifier(BaseModel):
 
 class AuthenticationInitResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(
         ..., description='Numer referencyjny operacji uwierzytelnienia.'
@@ -1363,7 +1367,7 @@ class AuthenticationInitResponse(BaseModel):
 
 class AuthenticationListItem(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     startDate: AwareDatetime = Field(
         ..., description='Data rozpoczęcia operacji uwierzytelnienia.'
@@ -1397,7 +1401,7 @@ class AuthenticationListItem(BaseModel):
 
 class AuthenticationListResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     continuationToken: Optional[str] = Field(
         None,
@@ -1410,7 +1414,7 @@ class AuthenticationListResponse(BaseModel):
 
 class AuthenticationOperationStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     startDate: AwareDatetime = Field(
         ..., description='Data rozpoczęcia operacji uwierzytelnienia.'
@@ -1438,7 +1442,7 @@ class AuthenticationOperationStatusResponse(BaseModel):
 
 class AuthenticationTokenRefreshResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     accessToken: TokenInfo = Field(
         ...,
@@ -1448,7 +1452,7 @@ class AuthenticationTokenRefreshResponse(BaseModel):
 
 class AuthenticationTokensResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     accessToken: TokenInfo = Field(..., description='Token dostępu.')
     refreshToken: TokenInfo = Field(
@@ -1459,7 +1463,7 @@ class AuthenticationTokensResponse(BaseModel):
 
 class BatchFileInfo(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     fileSize: conint(ge=1, le=5368709120) = Field(
         ...,
@@ -1476,7 +1480,7 @@ class BatchFileInfo(BaseModel):
 
 class CertificateEnrollmentStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     requestDate: AwareDatetime = Field(
         ..., description='Data złożenia wniosku certyfikacyjnego.'
@@ -1493,7 +1497,7 @@ class CertificateEnrollmentStatusResponse(BaseModel):
 
 class CertificateSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: CertificateSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1503,7 +1507,7 @@ class CertificateSubjectIdentifier(BaseModel):
 
 class EffectiveContextLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     onlineSession: OnlineSessionEffectiveContextLimits = Field(
         ..., description='Limity dla sesji interaktywnych.'
@@ -1515,7 +1519,7 @@ class EffectiveContextLimits(BaseModel):
 
 class EffectiveSubjectLimits(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     enrollment: Optional[EnrollmentEffectiveSubjectLimits] = None
     certificate: Optional[CertificateEffectiveSubjectLimits] = None
@@ -1523,7 +1527,7 @@ class EffectiveSubjectLimits(BaseModel):
 
 class EnrollCertificateRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificateName: str = Field(..., description='Nazwa własna certyfikatu.')
     certificateType: KsefCertificateType = Field(
@@ -1542,7 +1546,7 @@ class EnrollCertificateRequest(BaseModel):
 
 class EntityAuthorizationPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityAuthorizationPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1552,7 +1556,7 @@ class EntityAuthorizationPermissionsSubjectIdentifier(BaseModel):
 
 class EntityAuthorizationsAuthorIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityAuthorizationsAuthorIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1562,7 +1566,7 @@ class EntityAuthorizationsAuthorIdentifier(BaseModel):
 
 class EntityAuthorizationsAuthorizedEntityIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityAuthorizationsAuthorizedEntityIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1572,7 +1576,7 @@ class EntityAuthorizationsAuthorizedEntityIdentifier(BaseModel):
 
 class EntityAuthorizationsAuthorizingEntityIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityAuthorizationsAuthorizingEntityIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1582,7 +1586,7 @@ class EntityAuthorizationsAuthorizingEntityIdentifier(BaseModel):
 
 class EntityPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityPermissionType = Field(
         ..., description='Możliwe uprawnienia do nadania.'
@@ -1595,7 +1599,7 @@ class EntityPermission(BaseModel):
 
 class EntityPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1605,7 +1609,7 @@ class EntityPermissionsSubjectIdentifier(BaseModel):
 
 class EntityPermissionsSubordinateEntityIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityPermissionsSubordinateEntityIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1615,7 +1619,7 @@ class EntityPermissionsSubordinateEntityIdentifier(BaseModel):
 
 class EntityRolesParentEntityIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EntityRolesParentEntityIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1625,7 +1629,7 @@ class EntityRolesParentEntityIdentifier(BaseModel):
 
 class EuEntityAdministrationPermissionsContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EuEntityAdministrationPermissionsContextIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1635,7 +1639,7 @@ class EuEntityAdministrationPermissionsContextIdentifier(BaseModel):
 
 class EuEntityAdministrationPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EuEntityAdministrationPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1645,7 +1649,7 @@ class EuEntityAdministrationPermissionsSubjectIdentifier(BaseModel):
 
 class EuEntityPermissionsAuthorIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EuEntityPermissionsAuthorIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1655,7 +1659,7 @@ class EuEntityPermissionsAuthorIdentifier(BaseModel):
 
 class EuEntityPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: EuEntityPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1665,7 +1669,7 @@ class EuEntityPermissionsSubjectIdentifier(BaseModel):
 
 class GenerateTokenRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     permissions: Optional[List[TokenPermissionType]] = Field(
         None, description='Uprawnienia przypisane tokenowi.'
@@ -1675,7 +1679,7 @@ class GenerateTokenRequest(BaseModel):
 
 class IndirectPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: IndirectPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1685,7 +1689,7 @@ class IndirectPermissionsSubjectIdentifier(BaseModel):
 
 class IndirectPermissionsTargetIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: IndirectPermissionsTargetIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1698,7 +1702,7 @@ class IndirectPermissionsTargetIdentifier(BaseModel):
 
 class InitTokenAuthenticationRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     challenge: str = Field(..., description='Wygenerowany wcześniej challenge.')
     contextIdentifier: AuthenticationContextIdentifier = Field(
@@ -1717,7 +1721,7 @@ class InitTokenAuthenticationRequest(BaseModel):
 
 class InvoiceMetadataBuyer(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     identifier: InvoiceMetadataBuyerIdentifier = Field(
         ..., description='Identyfikator nabywcy.'
@@ -1727,7 +1731,7 @@ class InvoiceMetadataBuyer(BaseModel):
 
 class InvoiceMetadataThirdSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: ThirdSubjectIdentifierType = Field(
         ...,
@@ -1740,7 +1744,7 @@ class InvoiceMetadataThirdSubjectIdentifier(BaseModel):
 
 class InvoicePackage(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     invoiceCount: conint(ge=0, le=10000) = Field(
         ..., description='Łączna liczba faktur w paczce.'
@@ -1773,7 +1777,7 @@ class InvoicePackage(BaseModel):
 
 class InvoiceQueryDateRange(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     dateType: InvoiceQueryDateType = Field(
         ...,
@@ -1790,7 +1794,7 @@ class InvoiceQueryDateRange(BaseModel):
 
 class InvoiceQueryFilters(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectType: InvoiceQuerySubjectType = Field(
         ...,
@@ -1831,7 +1835,7 @@ class InvoiceQueryFilters(BaseModel):
 
 class OpenBatchSessionRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     formCode: FormCode = Field(
         ...,
@@ -1852,7 +1856,7 @@ class OpenBatchSessionRequest(BaseModel):
 
 class OpenBatchSessionResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(..., description='Numer referencyjny sesji.')
     partUploadRequests: List[PartUploadRequest] = Field(
@@ -1863,7 +1867,7 @@ class OpenBatchSessionResponse(BaseModel):
 
 class PermissionsOperationStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     status: StatusInfo = Field(
         ...,
@@ -1873,7 +1877,7 @@ class PermissionsOperationStatusResponse(BaseModel):
 
 class PersonPermissionsAuthorIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonPermissionsAuthorIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1886,7 +1890,7 @@ class PersonPermissionsAuthorIdentifier(BaseModel):
 
 class PersonPermissionsAuthorizedIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonPermissionsAuthorizedIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1896,7 +1900,7 @@ class PersonPermissionsAuthorizedIdentifier(BaseModel):
 
 class PersonPermissionsContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonPermissionsContextIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1906,7 +1910,7 @@ class PersonPermissionsContextIdentifier(BaseModel):
 
 class PersonPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1916,7 +1920,7 @@ class PersonPermissionsSubjectIdentifier(BaseModel):
 
 class PersonPermissionsTargetIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonPermissionsTargetIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1929,7 +1933,7 @@ class PersonPermissionsTargetIdentifier(BaseModel):
 
 class PersonalPermissionsAuthorizedIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonalPermissionsAuthorizedIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1939,7 +1943,7 @@ class PersonalPermissionsAuthorizedIdentifier(BaseModel):
 
 class PersonalPermissionsContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonalPermissionsContextIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1949,7 +1953,7 @@ class PersonalPermissionsContextIdentifier(BaseModel):
 
 class PersonalPermissionsTargetIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: PersonalPermissionsTargetIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -1962,7 +1966,7 @@ class PersonalPermissionsTargetIdentifier(BaseModel):
 
 class PublicKeyCertificate(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificate: str = Field(
         ...,
@@ -1982,7 +1986,7 @@ class PublicKeyCertificate(BaseModel):
 
 class QueryTokensResponseItem(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: Optional[str] = Field(
         None, description='Numer referencyjny tokena.'
@@ -2016,7 +2020,7 @@ class QueryTokensResponseItem(BaseModel):
 
 class SessionInvoiceStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ordinalNumber: conint(ge=1) = Field(
         ..., description='Numer sekwencyjny faktury w ramach sesji.'
@@ -2055,7 +2059,7 @@ class SessionInvoiceStatusResponse(BaseModel):
 
 class SessionInvoicesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     continuationToken: Optional[str] = Field(
         None,
@@ -2068,7 +2072,7 @@ class SessionInvoicesResponse(BaseModel):
 
 class SessionStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     status: StatusInfo = Field(
         ...,
@@ -2095,7 +2099,7 @@ class SessionStatusResponse(BaseModel):
 
 class SessionsQueryResponseItem(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     referenceNumber: str = Field(..., description='Numer referencyjny sesji.')
     status: StatusInfo = Field(..., description='Status sesji.')
@@ -2121,7 +2125,7 @@ class SessionsQueryResponseItem(BaseModel):
 
 class SetSubjectLimitsRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifierType: Optional[SubjectIdentifierType] = None
     enrollment: Optional[EnrollmentSubjectLimitsOverride] = None
@@ -2130,7 +2134,7 @@ class SetSubjectLimitsRequest(BaseModel):
 
 class SubjectCreateRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectNip: str
     subjectType: SubjectType
@@ -2141,7 +2145,7 @@ class SubjectCreateRequest(BaseModel):
 
 class SubordinateEntityRolesQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subordinateEntityIdentifier: Optional[
         EntityPermissionsSubordinateEntityIdentifier
@@ -2153,7 +2157,7 @@ class SubordinateEntityRolesQueryRequest(BaseModel):
 
 class SubordinateRoleSubordinateEntityIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubordinateRoleSubordinateEntityIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2163,7 +2167,7 @@ class SubordinateRoleSubordinateEntityIdentifier(BaseModel):
 
 class SubunitPermissionsAuthorIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubunitPermissionsAuthorIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2173,7 +2177,7 @@ class SubunitPermissionsAuthorIdentifier(BaseModel):
 
 class SubunitPermissionsAuthorizedIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubunitPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2183,7 +2187,7 @@ class SubunitPermissionsAuthorizedIdentifier(BaseModel):
 
 class SubunitPermissionsContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubunitPermissionsContextIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2193,7 +2197,7 @@ class SubunitPermissionsContextIdentifier(BaseModel):
 
 class SubunitPermissionsSubjectIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubunitPermissionsSubjectIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2203,7 +2207,7 @@ class SubunitPermissionsSubjectIdentifier(BaseModel):
 
 class SubunitPermissionsSubunitIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: SubunitPermissionsSubunitIdentifierType = Field(
         ..., description='Typ identyfikatora.'
@@ -2213,7 +2217,7 @@ class SubunitPermissionsSubunitIdentifier(BaseModel):
 
 class TestDataAuthorizedIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: TestDataAuthorizedIdentifierType
     value: str
@@ -2221,7 +2225,7 @@ class TestDataAuthorizedIdentifier(BaseModel):
 
 class TestDataContextIdentifier(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     type: TestDataContextIdentifierType
     value: str
@@ -2229,7 +2233,7 @@ class TestDataContextIdentifier(BaseModel):
 
 class TestDataPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     description: str
     permissionType: TestDataPermissionType
@@ -2237,7 +2241,7 @@ class TestDataPermission(BaseModel):
 
 class TestDataPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     contextIdentifier: TestDataContextIdentifier
     authorizedIdentifier: TestDataAuthorizedIdentifier
@@ -2246,7 +2250,7 @@ class TestDataPermissionsGrantRequest(BaseModel):
 
 class TestDataPermissionsRevokeRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     contextIdentifier: TestDataContextIdentifier
     authorizedIdentifier: TestDataAuthorizedIdentifier
@@ -2254,7 +2258,7 @@ class TestDataPermissionsRevokeRequest(BaseModel):
 
 class CertificateListItem(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificateSerialNumber: str = Field(
         ..., description='Numer seryjny certyfikatu (w formacie szesnastkowym).'
@@ -2286,7 +2290,7 @@ class CertificateListItem(BaseModel):
 
 class EntityAuthorizationGrant(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: str = Field(..., description='Identyfikator uprawnienia.')
     authorIdentifier: Optional[EntityAuthorizationsAuthorIdentifier] = Field(
@@ -2312,7 +2316,7 @@ class EntityAuthorizationGrant(BaseModel):
 
 class EntityAuthorizationPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: EntityAuthorizationPermissionsSubjectIdentifier = Field(
         ...,
@@ -2326,7 +2330,7 @@ class EntityAuthorizationPermissionsGrantRequest(BaseModel):
 
 class EntityAuthorizationPermissionsQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     authorizingIdentifier: Optional[EntityAuthorizationsAuthorizingEntityIdentifier] = (
         Field(
@@ -2351,7 +2355,7 @@ class EntityAuthorizationPermissionsQueryRequest(BaseModel):
 
 class EntityPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: EntityPermissionsSubjectIdentifier = Field(
         ...,
@@ -2366,7 +2370,7 @@ class EntityPermissionsGrantRequest(BaseModel):
 
 class EntityRole(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     parentEntityIdentifier: Optional[EntityRolesParentEntityIdentifier] = Field(
         None,
@@ -2381,7 +2385,7 @@ class EntityRole(BaseModel):
 
 class EuEntityAdministrationPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: EuEntityAdministrationPermissionsSubjectIdentifier = Field(
         ...,
@@ -2397,7 +2401,7 @@ class EuEntityAdministrationPermissionsGrantRequest(BaseModel):
 
 class EuEntityPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: str = Field(..., description='Identyfikator uprawnienia.')
     authorIdentifier: EuEntityPermissionsAuthorIdentifier = Field(
@@ -2420,7 +2424,7 @@ class EuEntityPermission(BaseModel):
 
 class EuEntityPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: EuEntityPermissionsSubjectIdentifier = Field(
         ...,
@@ -2435,7 +2439,7 @@ class EuEntityPermissionsGrantRequest(BaseModel):
 
 class IndirectPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: IndirectPermissionsSubjectIdentifier = Field(
         ...,
@@ -2454,7 +2458,7 @@ class IndirectPermissionsGrantRequest(BaseModel):
 
 class InvoiceExportRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     encryption: EncryptionInfo = Field(
         ..., description='Informacje wymagane do zaszyfrowania wyniku zapytania.'
@@ -2466,7 +2470,7 @@ class InvoiceExportRequest(BaseModel):
 
 class InvoiceExportStatusResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     status: StatusInfo = Field(
         ...,
@@ -2482,7 +2486,7 @@ class InvoiceExportStatusResponse(BaseModel):
 
 class InvoiceMetadataThirdSubject(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     identifier: InvoiceMetadataThirdSubjectIdentifier = Field(
         ..., description='Identyfikator podmiotu trzeciego.'
@@ -2493,7 +2497,7 @@ class InvoiceMetadataThirdSubject(BaseModel):
 
 class PersonPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: str = Field(..., description='Identyfikator uprawnienia.')
     authorizedIdentifier: PersonPermissionsAuthorizedIdentifier = Field(
@@ -2526,7 +2530,7 @@ class PersonPermission(BaseModel):
 
 class PersonPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: PersonPermissionsSubjectIdentifier = Field(
         ...,
@@ -2541,7 +2545,7 @@ class PersonPermissionsGrantRequest(BaseModel):
 
 class PersonPermissionsQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     authorIdentifier: Optional[PersonPermissionsAuthorIdentifier] = Field(
         None,
@@ -2574,7 +2578,7 @@ class PersonPermissionsQueryRequest(BaseModel):
 
 class PersonalPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: str = Field(..., description='Identyfikator uprawnienia.')
     contextIdentifier: Optional[PersonalPermissionsContextIdentifier] = Field(
@@ -2603,7 +2607,7 @@ class PersonalPermission(BaseModel):
 
 class PersonalPermissionsQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     contextIdentifier: Optional[PersonalPermissionsContextIdentifier] = Field(
         None,
@@ -2624,7 +2628,7 @@ class PersonalPermissionsQueryRequest(BaseModel):
 
 class QueryCertificatesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     certificates: List[CertificateListItem] = Field(
         ..., description='Lista certyfikatów spełniających kryteria wyszukiwania.'
@@ -2636,7 +2640,7 @@ class QueryCertificatesResponse(BaseModel):
 
 class QueryEntityAuthorizationPermissionsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     authorizationGrants: List[EntityAuthorizationGrant] = Field(
         ..., description='Lista uprawnień.'
@@ -2648,7 +2652,7 @@ class QueryEntityAuthorizationPermissionsResponse(BaseModel):
 
 class QueryEntityRolesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     roles: List[EntityRole] = Field(..., description='Lista ról.')
     hasMore: bool = Field(
@@ -2658,7 +2662,7 @@ class QueryEntityRolesResponse(BaseModel):
 
 class QueryEuEntityPermissionsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     permissions: List[EuEntityPermission] = Field(..., description='Lista uprawnień.')
     hasMore: bool = Field(
@@ -2668,7 +2672,7 @@ class QueryEuEntityPermissionsResponse(BaseModel):
 
 class QueryPersonPermissionsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     permissions: List[PersonPermission] = Field(..., description='Lista uprawnień.')
     hasMore: bool = Field(
@@ -2678,7 +2682,7 @@ class QueryPersonPermissionsResponse(BaseModel):
 
 class QueryPersonalPermissionsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     permissions: List[PersonalPermission] = Field(..., description='Lista uprawnień.')
     hasMore: bool = Field(
@@ -2688,7 +2692,7 @@ class QueryPersonalPermissionsResponse(BaseModel):
 
 class QueryTokensResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     continuationToken: Optional[str] = Field(
         None,
@@ -2701,7 +2705,7 @@ class QueryTokensResponse(BaseModel):
 
 class SessionsQueryResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     continuationToken: Optional[str] = Field(
         None,
@@ -2712,7 +2716,7 @@ class SessionsQueryResponse(BaseModel):
 
 class SubordinateEntityRole(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subordinateEntityIdentifier: SubordinateRoleSubordinateEntityIdentifier = Field(
         ...,
@@ -2727,7 +2731,7 @@ class SubordinateEntityRole(BaseModel):
 
 class SubunitPermission(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     id: str = Field(..., description='Identyfikator uprawnienia.')
     authorizedIdentifier: SubunitPermissionsAuthorizedIdentifier = Field(
@@ -2752,7 +2756,7 @@ class SubunitPermission(BaseModel):
 
 class SubunitPermissionsGrantRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subjectIdentifier: SubunitPermissionsSubjectIdentifier = Field(
         ...,
@@ -2771,7 +2775,7 @@ class SubunitPermissionsGrantRequest(BaseModel):
 
 class SubunitPermissionsQueryRequest(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     subunitIdentifier: Optional[SubunitPermissionsSubunitIdentifier] = Field(
         None,
@@ -2781,7 +2785,7 @@ class SubunitPermissionsQueryRequest(BaseModel):
 
 class InvoiceMetadata(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     ksefNumber: str = Field(..., description='Numer KSeF faktury.')
     invoiceNumber: str = Field(..., description='Numer faktury nadany przez wystawcę.')
@@ -2833,7 +2837,7 @@ class InvoiceMetadata(BaseModel):
 
 class QueryInvoicesMetadataResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     hasMore: bool = Field(
         ..., description='Określa, czy dostępna jest kolejna strona wyników.'
@@ -2849,7 +2853,7 @@ class QueryInvoicesMetadataResponse(BaseModel):
 
 class QuerySubordinateEntityRolesResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     roles: List[SubordinateEntityRole] = Field(..., description='Lista ról.')
     hasMore: bool = Field(
@@ -2859,7 +2863,7 @@ class QuerySubordinateEntityRolesResponse(BaseModel):
 
 class QuerySubunitPermissionsResponse(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra='ignore',
     )
     permissions: List[SubunitPermission] = Field(..., description='Lista uprawnień.')
     hasMore: bool = Field(
