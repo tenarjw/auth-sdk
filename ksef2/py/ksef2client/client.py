@@ -1,5 +1,6 @@
 # client.py
 # https://ksef-test.mf.gov.pl/docs/v2/openapi.json
+from typing import List
 
 import requests
 from .models import *
@@ -184,10 +185,17 @@ class KSeFClient:
   def query_invoices_metadata(self, request: InvoiceQueryFilters, page_size: int = 10,
                               page_offset: int = 0) -> QueryInvoicesMetadataResponse:
     # Wyszukuje metadane faktur.
+
+    json_data = request.model_dump(
+      mode='json',  # To zamieni datetime na stringi ISO i Enumy na teksty
+      by_alias=True,  # To zamieni 'from_' na 'from'
+      exclude_none=True  # To usunie puste pola, których API nie lubi
+    )
+
     params = {"pageSize": page_size, "pageOffset": page_offset}
     response = self.session.post(
       f"{self.base_url}/v2/invoices/query/metadata",
-      json=request.model_dump(by_alias=True, exclude_none=True),
+      json=json_data, #request.model_dump(by_alias=True, exclude_none=True),
       params=params,
       headers=self._get_headers()
     )
@@ -238,3 +246,15 @@ class KSeFClient:
     # Odpowiedź to lista, a nie obiekt, więc trzeba ją odpowiednio zmapować
     return [PublicKeyCertificate(**item) for item in response.json()]
 
+# --- POBIERANIE TREŚCI FAKTURY  ---
+
+  def get_invoice_content(self, ksef_number: str) -> bytes:
+    # Pobiera XML konkretnej faktury na podstawie numeru KSeF.
+    headers = self._get_headers()
+    # Endpoint zwraca strumień bajtów XML
+    response = self.session.get(
+      f"{self.base_url}/v2/invoices/{ksef_number}/content",
+      headers=headers
+    )
+    response.raise_for_status()
+    return response.content
