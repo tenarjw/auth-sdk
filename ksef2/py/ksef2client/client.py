@@ -28,7 +28,8 @@ class KSeFClient:
   def challenge(self) -> AuthenticationChallengeResponse:
     # Generuje challenge do uwierzytelniania (metodą POST).
     response = self.session.post(
-      f"{self.base_url}/api/v2/auth/challenge",
+#      f"{self.base_url}/api/v2/auth/challenge", # zmiana API
+      f"{self.base_url}/v2/auth/challenge",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -38,7 +39,7 @@ class KSeFClient:
     # Inicjuje uwierzytelnianie podpisem XAdES.
     headers = self._get_headers({"Content-Type": "application/xml", "Accept": "application/json"})
     response = self.session.post(
-      f"{self.base_url}/api/v2/auth/xades-signature",
+      f"{self.base_url}/v2/auth/xades-signature", # zmiana api
       data=signed_xml,
       headers=headers
     )
@@ -48,7 +49,7 @@ class KSeFClient:
   def auth_by_ksef_token(self, request: InitTokenAuthenticationRequest) -> AuthenticationInitResponse:
     # Inicjuje uwierzytelnianie tokenem KSeF.
     response = self.session.post(
-      f"{self.base_url}/api/v2/auth/ksef-token",
+      f"{self.base_url}/v2/auth/ksef-token", # zmiana API
       json=request.model_dump(by_alias=True),
       headers=self._get_headers()
     )
@@ -60,7 +61,7 @@ class KSeFClient:
     # Wymaga 'AuthenticationToken' jako Bearer
     auth_token_headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {auth_token}'}
     response = self.session.get(
-      f"{self.base_url}/api/v2/auth/{reference_number}",
+      f"{self.base_url}/v2/auth/{reference_number}", # zmiana API
       headers=auth_token_headers
     )
     response.raise_for_status()
@@ -71,7 +72,7 @@ class KSeFClient:
     # Wymaga 'AuthenticationToken' jako Bearer
     headers = {"Authorization": f"Bearer {auth_token}", "Accept": "application/json"}
     response = self.session.post(
-      f"{self.base_url}/api/v2/auth/token/redeem",
+      f"{self.base_url}/v2/auth/token/redeem", # zmiana api
       headers=headers
     )
     response.raise_for_status()
@@ -81,7 +82,7 @@ class KSeFClient:
     # Odświeża AccessToken używając RefreshToken.
     headers = {"Authorization": f"Bearer {refresh_token}", "Accept": "application/json"}
     response = self.session.post(
-      f"{self.base_url}/api/v2/auth/token/refresh",
+      f"{self.base_url}/v2/auth/token/refresh",
       headers=headers
     )
     response.raise_for_status()
@@ -90,7 +91,7 @@ class KSeFClient:
   def revoke_current_session(self):
     # Unieważnia bieżącą sesję uwierzytelniania.
     response = self.session.delete(
-      f"{self.base_url}/api/v2/auth/sessions/current",
+      f"{self.base_url}/v2/auth/sessions/current",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -103,7 +104,7 @@ class KSeFClient:
       headers["x-continuation-token"] = x_continuation_token
 
     response = self.session.get(
-      f"{self.base_url}/api/v2/auth/sessions",
+      f"{self.base_url}/v2/auth/sessions",
       params=params,
       headers=headers
     )
@@ -116,7 +117,7 @@ class KSeFClient:
     # Otwiera sesję interaktywną.
     payload=request.model_dump(by_alias=True)
     response = self.session.post(
-      f"{self.base_url}/api/v2/sessions/online",
+      f"{self.base_url}/v2/sessions/online",
       json=payload,
       headers=self._get_headers()
     )
@@ -126,7 +127,7 @@ class KSeFClient:
   def online_session_send_invoice(self, reference_number: str, request: SendInvoiceRequest) -> SendInvoiceResponse:
     # Wysyła fakturę w sesji interaktywnej.
     response = self.session.post(
-      f"{self.base_url}/api/v2/sessions/online/{reference_number}/invoices",
+      f"{self.base_url}/v2/sessions/online/{reference_number}/invoices",
       json=request.model_dump(by_alias=True),
       headers=self._get_headers()
     )
@@ -136,7 +137,7 @@ class KSeFClient:
   def online_session_terminate(self, reference_number: str):
     # Zamyka sesję interaktywną.
     response = self.session.post(
-      f"{self.base_url}/api/v2/sessions/online/{reference_number}/close",
+      f"{self.base_url}/v2/sessions/online/{reference_number}/close",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -145,7 +146,7 @@ class KSeFClient:
   def batch_session_open(self, request: OpenBatchSessionRequest) -> OpenBatchSessionResponse:
     # Otwiera sesję wsadową.
     response = self.session.post(
-      f"{self.base_url}/api/v2/sessions/batch",
+      f"{self.base_url}/v2/sessions/batch",
       json=request.model_dump(by_alias=True),
       headers=self._get_headers()
     )
@@ -156,7 +157,7 @@ class KSeFClient:
     # Pobiera status sesji (online lub batch).
     # POPRAWKA: Ujednolicony endpoint /sessions/{referenceNumber}
     response = self.session.get(
-      f"{self.base_url}/api/v2/sessions/{reference_number}",
+      f"{self.base_url}/v2/sessions/{reference_number}",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -171,7 +172,7 @@ class KSeFClient:
       headers["x-continuation-token"] = x_continuation_token
 
     response = self.session.get(
-      f"{self.base_url}/api/v2/sessions/{reference_number}/invoices",
+      f"{self.base_url}/v2/sessions/{reference_number}/invoices",
       params=params,
       headers=headers
     )
@@ -185,7 +186,7 @@ class KSeFClient:
     # Wyszukuje metadane faktur.
     params = {"pageSize": page_size, "pageOffset": page_offset}
     response = self.session.post(
-      f"{self.base_url}/api/v2/invoices/query/metadata",
+      f"{self.base_url}/v2/invoices/query/metadata",
       json=request.model_dump(by_alias=True, exclude_none=True),
       params=params,
       headers=self._get_headers()
@@ -198,7 +199,7 @@ class KSeFClient:
   def generate_token(self, request: GenerateTokenRequest) -> GenerateTokenResponse:
     # Generuje nowy token KSeF.
     response = self.session.post(
-      f"{self.base_url}/api/v2/tokens",
+      f"{self.base_url}/v2/tokens",
       json=request.model_dump(by_alias=True, exclude_none=True),
       headers=self._get_headers()
     )
@@ -208,7 +209,7 @@ class KSeFClient:
   def get_token_status(self, reference_number: str) -> TokenStatusResponse:
     # Pobiera status tokena KSeF.
     response = self.session.get(
-      f"{self.base_url}/api/v2/tokens/{reference_number}",
+      f"{self.base_url}/v2/tokens/{reference_number}",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -217,7 +218,7 @@ class KSeFClient:
   def revoke_token_by_ref(self, reference_number: str):
     # Unieważnia token KSeF.
     response = self.session.delete(
-      f"{self.base_url}/api/v2/tokens/{reference_number}",
+      f"{self.base_url}/v2/tokens/{reference_number}",
       headers=self._get_headers()
     )
     response.raise_for_status()
@@ -230,7 +231,7 @@ class KSeFClient:
     # Ta operacja nie wymaga uwierzytelnienia
     headers = {"Accept": "application/json"}
     response = self.session.get(
-      f"{self.base_url}/api/v2/security/public-key-certificates",
+      f"{self.base_url}/v2/security/public-key-certificates",
       headers=headers
     )
     response.raise_for_status()

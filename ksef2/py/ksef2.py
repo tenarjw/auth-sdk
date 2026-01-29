@@ -14,6 +14,7 @@ from ksef2client.client import KSeFClient
 from ksef2client.auth_utils import create_auth_request_xml2
 from ksef2client.signing import sign_auth_request_with_xmlsec as sign_xades2
 
+from config import settings
 
 def authenticate_with_certificate_ksef2(ksef_client: KSeFClient, certificate_path: str, password: str, nip: str):
     # Funkcja uwierzytelniania certyfikatem w KSeF 2.0.
@@ -132,7 +133,7 @@ def ksef2_send_invoice_in_session(ksef_client: KSeFClient, session_ref: str, inv
 
 def test_send_invoice_flow(nip: str, invoice_path: str, certificate_path : str, password: str):
    # przepływ uwierzytelniania i wysyłki faktury.
-    ksef = KSeFClient(base_url="https://ksef-test.mf.gov.pl")
+    ksef = KSeFClient(base_url=settings.ksef2.api_url)
     
     print("--- Krok 1: Uwierzytelnianie ---")
     tokens = authenticate_with_certificate_ksef2(
@@ -177,20 +178,26 @@ def test_send_invoice_flow(nip: str, invoice_path: str, certificate_path : str, 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Testowanie klienta KSeF 2.0')
     parser.add_argument('cmd', choices=['login', 'send'], help='Operacja do wykonania.')
-    parser.add_argument('--nip', required=True, help='NIP podatnika.')
-    
+    # nip do pliku config.ini
+    # parser.add_argument('--nip', required=True, help='NIP podatnika.')
+    parser.add_argument('--file', required=True, help='nzawa pliku z fakturą.')
+
     args = parser.parse_args()
 
+    path_pfx = str(os.path.join(os.path.dirname(__file__), settings.ksef2.cert_pfx))
     if args.cmd == 'login':
-        ksef_client = KSeFClient(base_url="https://ksef-test.mf.gov.pl")
+        ksef_client = KSeFClient(base_url=settings.ksef2.api_url) # "https://api-test.ksef.mf.gov.pl
         authenticate_with_certificate_ksef2(
             ksef_client,
             nip=args.nip,
-            certificate_path=os.path.join(os.path.dirname(__file__), 'cert.pfx'),
-            password='pass123'
+            certificate_path=path_pfx,
+            password=settings.cert_pass
         )
-    elif args.cmd == 'send':
+    elif args.cmd == 'send' and args.file:
+        # przykład: ksef2.py send --file invoice.xml
         invoice_file_path = os.path.join(os.path.dirname(__file__), 'invoice.xml')
-        test_send_invoice_flow(args.nip, invoice_file_path,
-                               certificate_path=os.path.join(os.path.dirname(__file__), 'cert.pfx'),
-                               password='pass123')
+        test_send_invoice_flow(settings.ksef2.nip, invoice_file_path,
+                               certificate_path=path_pfx,
+                               password=settings.ksef2.cert_pass)
+    else:
+        parser.print_help()
