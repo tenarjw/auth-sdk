@@ -8,3 +8,6 @@ zmiany:
 2026-01-28 
 - uelastycznienie modeli - API zmienia się bez zmiany wersji!
 - dodanie pliki .ini
+2026-01-29
+- uaktualnienie API
+- dodanie odbioru
