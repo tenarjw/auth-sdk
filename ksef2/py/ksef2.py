@@ -354,9 +354,23 @@ def test_send_invoice_flow(nip: str, invoice_path: str, certificate_path : str, 
             print("   Sesja została zamknięta.")
 
 
+
+def sign_auth_file(ksef_client: KSeFClient, certificate_path: str, password: str, fn : str):
+    try:
+        xml=open(fn).read()
+        # Podpisz XML podpisem XAdES
+        print("Podpisywanie żądania XML...")
+        signed_xml = sign_xades2(xml, certificate_path, password)
+        xades=open(fn+'.xades','bw+')
+        xades.write(signed_xml)
+        xades.close()
+    except Exception as e:
+        print(f"Wystąpił nieoczekiwany błąd: {e}")
+        return None
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Testowanie klienta KSeF 2.0')
-    parser.add_argument('cmd', choices=['login', 'send', 'inbox', 'download'], help='Operacja do wykonania.')
+    parser.add_argument('cmd', choices=['login', 'send', 'inbox', 'download', 'sign'], help='Operacja do wykonania.')
     parser.add_argument('--nip', help='NIP podatnika (wymagany przy login/inbox).', default=settings.ksef2.nip)
     parser.add_argument('--file', help='Ścieżka do pliku (dla send).')
     parser.add_argument('--ksef-num', help='Numer KSeF faktury (dla download).')
@@ -377,6 +391,9 @@ if __name__ == "__main__":
     elif args.cmd == 'send' and args.file:
         # przykład: send --file invoice.xml
         test_send_invoice_flow(args.nip, args.file, certificate_path=path_pfx, password=settings.ksef2.cert_pass)
+
+    elif args.cmd == 'sign' and args.file:
+        sign_auth_file(ksef_client,  certificate_path=path_pfx, password=settings.ksef2.cert_pass, fn=args.file)
 
     elif args.cmd == 'inbox':
         # 1. Logowanie
