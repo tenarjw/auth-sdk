@@ -13,7 +13,7 @@ OPTIONS=(0 "powrót do głównego menu"
          3 "SHA256"
          4 "SHA256 z solą"
          5 "MD5"
-         6 "Z bubliteki bcrypt"
+         6 "Z bibliteki bcrypt"
          7 "Przykład: szyfrowanie pliku"
          )
 

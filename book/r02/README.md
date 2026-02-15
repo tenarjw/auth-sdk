@@ -1,5 +1,12 @@
 # ROZDZIAŁ 2. DevOps i Docker — praktyczne wprowadzenie
 
+## Przykłady
+
+index/docker.md - przykłady operowania kontenerami Docker
+
+
+## Linki
+
 https://azure.microsoft.com/pl-pl/overview/what-is-devops/#devops-overview
 
 https://qualityisland.pl/poziomy 

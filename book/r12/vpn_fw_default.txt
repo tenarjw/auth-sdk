@@ -1,0 +1,2 @@
+# /etc/default/ufw:
+DEFAULT_FORWARD_POLICY="ACCEPT"

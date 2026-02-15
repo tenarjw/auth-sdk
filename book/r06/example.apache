@@ -1,0 +1,17 @@
+<VirtualHost *:443>
+    SSLEngine on
+    SSLCertificateFile "/etc/pki/tls/certs/server.crt"
+    SSLCertificateKeyFile "/etc/pki/tls/private/server.key"
+    SSLCertificateChainFile "/etc/pki/tls/certs/ca-bundle.crt"
+    
+    # Wyłącz niebezpieczne protokoły
+    SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+    
+    # Nowoczesne szyfry (zgodne z Mozilla SSL Configuration Generator)
+    SSLCipherSuite ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+    SSLHonorCipherOrder on
+    
+    # Stałe nagłówki bezpieczeństwa
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    Header always set X-Content-Type-Options nosniff
+</VirtualHost>

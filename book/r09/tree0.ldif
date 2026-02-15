@@ -1,0 +1,11 @@
+dn: dc=firma,dc=pl
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: firma.pl
+dc: firma
+
+dn: ou=Users,dc=firma,dc=pl
+objectClass: top
+objectClass: organizationalUnit
+ou: Users

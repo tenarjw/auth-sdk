@@ -1,0 +1,1 @@
+  session required pam_mkhomedir.so umask=0022 skel=/etc/skel

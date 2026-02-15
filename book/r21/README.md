@@ -1,5 +1,13 @@
 # ROZDZIAŁ 21. Prawo i technologia
 
+## Przykłady
+
+/edoreczenia - implementacja przyłączenia do e-Doręczeń
+
+/wk - implementacja przyłączenia do Węzła Krajowego
+
+/ksef2 - implementacja przyłączenia do KSeF2
+
 ## Linki
 
 https://eur-lex.europa.eu/legal-content/pl/TXT/?uri=CELEX:32014R0910

@@ -1,5 +1,9 @@
 # ROZDZIAŁ 9. LDAP
 
+## Przykłady
+
+/docker_smbldap
+
 ## Linki
 
 https://pl.wikipedia.org/wiki/Usługa_katalogowa

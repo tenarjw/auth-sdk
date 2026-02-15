@@ -1,0 +1,1 @@
+slappasswd -s $1

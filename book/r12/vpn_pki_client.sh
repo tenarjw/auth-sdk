@@ -1,0 +1,1 @@
+sudo openvpn jurek.ovpn

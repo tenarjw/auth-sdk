@@ -1,0 +1,1 @@
+samba-tool gpo listall

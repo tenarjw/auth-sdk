@@ -1,5 +1,13 @@
 # ROZDZIAŁ 6. TLS (TRANSPORT LAYER SECURITY)
 
+## Przykłady
+
+index/openssl.txt - przykłady użycia openssl
+
+docker_xsecure - przykład bezpiecznej wymiany plików
+
+/mtls 
+
 ## Linki
 
 https://github.com/tlswg

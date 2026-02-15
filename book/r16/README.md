@@ -1,5 +1,9 @@
 # ROZDZIAŁ 16. Magazyny sekretów
 
+# Przykłady
+
+/secrets
+
 ## Linki
 
 https://www.ssh.com/academy/ssh/agent

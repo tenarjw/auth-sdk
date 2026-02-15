@@ -1,0 +1,14 @@
+smtp_use_tls = yes
+smtpd_use_tls = yes
+smtpd_tls_auth_only = no
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_key_file = /etc/postfix/ssl/smtpd.key
+smtpd_tls_cert_file = /etc/postfix/ssl/smtpd.pem
+smtpd_tls_CAfile = /etc/postfix/ssl/CA-chain.pem
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/random
+smtpd_tls_security_level = may
+smtpd_tls_loglevel = 1
+smtpd_tls_auth_only = no
+smtpd_tls_received_header = yes

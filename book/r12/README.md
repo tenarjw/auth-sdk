@@ -1,5 +1,10 @@
 # ROZDZIAŁ 12.  VPN - wirtualna sieć prywatna
 
+## Przykłady
+
+docker_vpn - przykładowa implementacja VPN
+
+
 ## Linki
 
 https://openvpn.net/community-docs/hardening-openvpn-security.html

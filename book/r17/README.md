@@ -1,5 +1,9 @@
 # ROZDZIAŁ 17. Standardy identyfikacji i autoryzacji w aplikacjach internetowych
 
+## Przykłady
+
+/oauth - implementacja OAuth2
+
 ## Linki
 
 http://spyne.io/

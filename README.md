@@ -1,4 +1,4 @@
 # auth-sdk
 Identification and Authorization
 
-Oprogramowanie będące dodatkiem do książki "Autoryzacja i identyfikacj"
+Oprogramowanie będące dodatkiem do książki "Autoryzacja i identyfikacja"

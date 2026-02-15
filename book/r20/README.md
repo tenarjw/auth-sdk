@@ -1,5 +1,7 @@
 # ROZDZIAŁ 20. Rozwój systemów uwierzytelniania
 
+/oauth - implementacja standardu OAuth2
+
 ## Linki
 
 https://editor.swagger.io/

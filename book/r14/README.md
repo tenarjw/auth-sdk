@@ -1,5 +1,8 @@
 # ROZDZIAŁ 14. Integracja systemów Windows i Linux
 
+docker_smbldap - Samba / LDAP
+docker_krb5smb - Samba / Kerberos
+
 ## Linki
 
 https://lsc-project.org/

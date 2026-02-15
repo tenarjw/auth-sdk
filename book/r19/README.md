@@ -1,5 +1,9 @@
 # ROZDZIAŁ 19. Weryfikacja dwuetapowa
 
+## Przykłady
+
+/WebAuthn
+
 ## Linki
 
 https://en.wikipedia.org/wiki/Internet_Engineering_Task_Force

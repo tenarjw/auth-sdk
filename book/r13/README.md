@@ -1,5 +1,10 @@
 # ROZDZIAŁ 13. Poczta
 
+# Przykłady
+
+docker-postfilter - przykład dockera - filtru poczty opartego na Postfix
+
+
 ## Linki
 
 http://www.postfix.org/OVERVIEW.html

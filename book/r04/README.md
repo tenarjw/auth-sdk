@@ -1,5 +1,19 @@
 # ROZDZIAŁ 4. Szyfry w procesie uwierzytelnienia
 
+## Przykłady
+
+docker_ex - przykładowe skryptyw Pythonie, ilustrujące szyfrowanie:
+   1. Z biblioteki Fernet
+   2. AES-GCM
+   3. SHA256
+   4. SHA256 z solą
+   5. MD5
+   6. Z bubliteki bcrypt
+
+index/openssl.txt - przykłady użycia openssl
+
+docker_ca - implementacja własnego CA
+
 ## Linki
 
 http://www.crypto-it.net/pl/teoria/
