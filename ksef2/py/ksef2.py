@@ -103,7 +103,7 @@ def ksef2_open_online_session(ksef_client: KSeFClient, public_key_pem: str) -> t
     encryption_info = create_encryption_info(symmetric_key, public_key_pem, iv)
     
     session_request = OpenOnlineSessionRequest(
-        formCode=FormCode(systemCode="FA (2)", schemaVersion="1-0E", value="FA"),
+        formCode=FormCode(systemCode="FA (3)", schemaVersion="1-0E", value="FA"),
         encryption=encryption_info
     )
     
