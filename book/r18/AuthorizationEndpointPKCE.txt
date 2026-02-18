@@ -1,0 +1,10 @@
+GET {Authorization Endpoint}?
+  response_type=code&
+  client_id={Client ID}&
+  redirect_uri={Redirect URI}&
+  scope={Scopes}&
+  state={Arbitrary String}&
+  code_challenge=guAPs_oSgp461e5Hp2i9papYt_Z89TyFEphH-UPfBOE& // Wymagane
+  code_challenge_method=S256 // Wymagane (lub 'plain' - niezalecane)
+HTTP/1.1
+Host: {Authorization Server}

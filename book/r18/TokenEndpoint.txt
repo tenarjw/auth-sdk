@@ -1,0 +1,10 @@
+POST {Token Endpoint} HTTP/1.1
+Host: {Authorization Server}
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic {Base64(Client_ID:Client_Secret)} // Alternatywny sposób
+
+grant_type=authorization_code&
+code={Authorization Code}&
+redirect_uri={Redirect URI}&
+client_id={Client ID}& // Często wymagane przy przesyłaniu secret w body
+client_secret={Client Secret}
