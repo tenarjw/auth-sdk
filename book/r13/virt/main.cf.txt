@@ -1,0 +1,10 @@
+virtual_mailbox_domains = mysql:/etc/postfix/sql/mysql_virtual_domains_maps.cf
+virtual_alias_maps = mysql:/etc/postfix/sql/mysql_virtual_alias_maps.cf, mysql:/etc/postfix/sql/mysql_virtual_alias_domain_maps.cf, mysql:/etc/postfix/sql/mysql_virtual_alias_domain_catchall_maps.cf
+virtual_mailbox_maps = mysql:/etc/postfix/sql/mysql_virtual_mailbox_maps.cf, mysql:/etc/postfix/sql/mysql_virtual_alias_domain_mailbox_maps.cf
+relay_recipient_maps = mysql:/etc/postfix/sql/mysql_virtual_alias_maps.cf, mysql:/etc/postfix/sql/mysql_virtual_alias_domain_maps.cf, mysql:/etc/postfix/sql/mysql_virtual_alias_domain_catchall_maps.cf
+virtual_mailbox_base = /var/spool/mail/
+virtual_uid_maps = static:89
+virtual_gid_maps = static:89
+virtual_mailbox_limit = 0
+virtual_transport = dovecot
+smtpd_sender_login_maps = mysql:/etc/postfix/sql/mysql_virtual_mailbox_maps.cf

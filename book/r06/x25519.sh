@@ -1,0 +1,1 @@
+openssl genpkey -algorithm X25519 -out psk.key

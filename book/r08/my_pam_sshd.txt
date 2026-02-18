@@ -1,1 +1,15 @@
-  slaptest -u
+#%PAM-1.0
+auth       sufficient   pam_python.so pam_test1.py
+auth       required     pam_sepermit.so
+auth       include      password-auth
+
+account    required     pam_python.so pam_test1.py
+account    required     pam_nologin.so
+account    include      password-auth
+
+password   include      password-auth
+
+session    sufficient   pam_python.so pam_test1.py
+session    required     pam_loginuid.so
+session    optional     pam_keyinit.so force revoke
+session    include      password-auth

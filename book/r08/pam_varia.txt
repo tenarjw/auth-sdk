@@ -1,0 +1,16 @@
+# różne fragmenty konfiguracji PAM
+
+# common-password
+password [success=1 default=ignore] pam_unix.so obscure sha512
+password requisite pam_pwquality.so retry=3 minlen=12 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1
+
+
+# limit
+session required pam_limits.so
+
+# mkhome
+session required pam_mkhomedir.so umask=0022 skel=/etc/skel
+
+# users
+account required pam_access.so
+

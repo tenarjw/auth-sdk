@@ -10,7 +10,7 @@ docker_ex - przykładowe skryptyw Pythonie, ilustrujące szyfrowanie:
    5. MD5
    6. Z bubliteki bcrypt
 
-index/openssl.txt - przykłady użycia openssl
+../r06/openssl.txt - przykłady użycia openssl
 
 docker_ca - implementacja własnego CA
 

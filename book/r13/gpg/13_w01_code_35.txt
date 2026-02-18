@@ -1,0 +1,2 @@
+   touch $WEBROOT/.well-known/openpgpkey/policy
+   chmod 0644 $WEBROOT/.well-known/openpgpkey/policy

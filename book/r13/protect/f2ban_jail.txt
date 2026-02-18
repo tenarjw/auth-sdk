@@ -1,0 +1,7 @@
+[postfix]
+enabled = true
+port = 25,465,587
+filter = postfix
+logpath = /var/log/mail.log
+maxretry = 5
+bantime = 3600

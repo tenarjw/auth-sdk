@@ -1,0 +1,2 @@
+smtpd_sasl_type = cyrus
+smtpd_sasl_path = smtpd

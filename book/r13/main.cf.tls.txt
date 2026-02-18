@@ -1,0 +1,14 @@
+# TLS
+smtpd_tls_security_level = may
+smtp_tls_security_level = dane
+smtpd_use_tls = yes
+smtp_use_tls = yes
+smtpd_tls_auth_only = yes
+smtpd_tls_cert_file = /etc/letsencrypt/live/mail.example.com/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/mail.example.com/privkey.pem
+smtpd_tls_CAfile = /etc/letsencrypt/live/mail.example.com/fullchain.pem
+smtpd_tls_loglevel = 2
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1

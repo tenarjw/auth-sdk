@@ -1,0 +1,89 @@
+---
+- name: Build i wdrożenie aplikacji NextJS z archiwum
+  hosts: katalog
+  vars:
+    web_dir: "{{ playbook_dir }}/../web"
+    archive_name: out.tar.gz
+    remote_root: /var/www/katalog
+    remote_new:  /var/www/katalog.new
+    remote_backup: /var/www/katalog.bak
+    node_env: production
+
+  tasks:
+    # 1. Budowa aplikacji lokalnie (bez sudo)
+    - name: Budowa aplikacji NextJS
+      delegate_to: localhost
+      args:
+        chdir: "{{ web_dir }}"
+      environment:
+        NODE_ENV: "{{ node_env }}"
+      shell: yarn build
+      async: 0
+      poll: 0
+      failed_when: result.rc != 0
+      register: result
+
+    # 2. Spakowanie katalogu out do tar.gz
+    - name: Tworzenie archiwum tar.gz
+      delegate_to: localhost
+      args:
+        chdir: "{{ web_dir }}"
+      archive:
+        path: out
+        dest: "{{ playbook_dir }}/{{ archive_name }}"
+        format: gz
+        remove: no
+
+    # 3. Wysłanie archiwum na serwer
+    - name: Wysyłanie archiwum na serwer
+      become: true
+      copy:
+        src: "{{ playbook_dir }}/{{ archive_name }}"
+        dest: "/tmp/{{ archive_name }}"
+        mode: '0644'
+
+    # 4. Rozpakowanie do katalog.new
+    - name: Rozpakowanie archiwum do katalog.new
+      become: true
+      file:
+        path: "{{ remote_new }}"
+        state: absent
+    - name: Tworzenie katalogu docelowego
+      become: true
+      file:
+        path: "{{ remote_new }}"
+        state: directory
+    - name: Rozpakowanie
+      become: true
+      unarchive:
+        src: "/tmp/{{ archive_name }}"
+        dest: "{{ remote_new }}"
+        remote_src: true
+        extra_opts: [--strip-components=1]
+
+    # 5. Szybka podmiana symlinków/katalogów
+    - name: Usunięcie starego backupu
+      become: true
+      file:
+        path: "{{ remote_backup }}"
+        state: absent
+    - name: Zmiana nazw (atomic deploy)
+      become: true
+      shell: |
+        if [ -d "{{ remote_root }}" ]; then mv "{{ remote_root }}" "{{ remote_backup }}"; fi
+        mv "{{ remote_new }}" "{{ remote_root }}"
+
+    # 6. Ustawienie właściciela
+    - name: Właściciel www-data
+      become: true
+      file:
+        path: "{{ remote_root }}"
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    # 7. Test działania strony
+    - name: Test dostępności
+      uri:
+        url: "https://katalog.example.com"
+        status_code: 200

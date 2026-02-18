@@ -1,0 +1,1 @@
+auth_mechanisms = plain login

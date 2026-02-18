@@ -1,0 +1,3 @@
+auth sufficient pam_mysql.so user=postfix passwd=secure_password host=localhost db=postfix table=mailbox usercolumn=username passwdcolumn=password crypt=2
+auth include system-auth
+account sufficient pam_mysql.so user=postfix passwd=secure_password host=localhost db=postfix table=mailbox usercolumn=username passwdcolumn=password crypt=2

@@ -2,7 +2,7 @@
 
 ## Przykłady
 
-index/docker.md - przykłady operowania kontenerami Docker
+../r03/docker.md - przykłady operowania kontenerami Docker
 
 
 ## Linki

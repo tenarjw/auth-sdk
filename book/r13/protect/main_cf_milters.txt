@@ -1,0 +1,2 @@
+  smtpd_milters = inet:localhost:8891
+  non_smtpd_milters = $smtpd_milters

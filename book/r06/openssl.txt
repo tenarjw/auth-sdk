@@ -1,0 +1,333 @@
+openssl passwd -1
+
+###########
+openssl passwd -6 -salt $(openssl rand -hex 8)
+#Password: 
+#$6$b3fa0aa8eaead061$wLjGRo5JX3XNLNPXTs4O1bIlknEa4awTX2a1moXEbIbZEvm5UWb98maiR9Rs60GV7w3ME5SP50caN745vM1Yr/
+
+###########
+#!/bin/bash
+# Uwaga: Hasło powinno być podane interaktywnie (np. przez stdin), aby uniknąć jego widoczności w historii poleceń.
+
+PASSWORD=$1
+
+HASH=`echo $PASSWORD | openssl passwd -6 -salt $(openssl rand -hex 8) -stdin`
+echo $HASH
+
+###########
+openssl version
+
+###########
+openssl ciphers -v
+
+###########
+openssl engine
+
+###########
+openssl passwd -6 -salt n/Ep5kx/ secret
+
+###########
+openssl rand -hex 32
+
+###########
+openssl rand -base64 32
+
+###########
+# Szyfrowanie pliku
+openssl enc -aes256 -e -pbkdf2 -in plik.txt -out plik.enc
+
+# Deszyfrowanie pliku
+openssl enc -aes256 -d -pbkdf2 -in plik.enc -out plik2.txt
+
+###########
+# Generowanie klucza prywatnego RSA
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out privkey.pem
+
+# Wyświetlenie szczegółów klucza
+openssl pkey -in privkey.pem -text -noout
+
+# Generowanie klucza publicznego
+openssl pkey -in privkey.pem -out pubkey.pem -pubout
+
+###########
+# Obliczenie hasha SHA256 i podpisanie
+openssl dgst -sha256 -sign privkey.pem -out sign.bin test.txt
+
+# Weryfikacja podpisu
+openssl dgst -sha256 -verify pubkey.pem -signature sign.bin test.txt
+
+###########
+# Test połączenia i wyświetlenie certyfikatów
+openssl s_client -connect example.com:443 -showcerts -state
+
+###########
+openssl verify -CAfile cacert.pem example.com.crt
+
+###########
+openssl x509 -in example.com.crt -text -noout
+
+###########
+openssl req -new -out request.csr
+
+###########
+# Generowanie certyfikatu i klucza (RSA 3072 bity, ważność 10 lat)
+echo secret > mypass.txt
+openssl req -x509 -days 3650 -newkey rsa:3072 -passout file:mypass.txt \
+    -out server.pem -keyout server.key
+
+###########
+# Sprawdzenie klucza prywatnego
+openssl pkey -in server.key -passin file:mypass.txt  -check
+#jeśli klucz jest RSA - można użyć:
+openssl rsa -in server.key -passin file:mypass.txt -check
+
+# Wyświetlenie certyfikatu
+
+openssl x509 -in server.pem -text -noout
+
+Konwersja do formatu PKCS12 (PFX):
+
+# Eksport do PFX
+openssl pkcs12 -export -out server.pfx -inkey server.key -passin file:mypass.txt -in server.pem
+
+# PFX -> klucz prywatny
+openssl pkcs12 -info -in server.pfx -nodes -nocerts -out server_test.key
+
+# PFX -> certyfikat
+openssl pkcs12 -info -in server.pfx -nodes -nokeys -out server_test.pem
+
+Generowanie odcisku palca certyfikatu:
+
+# Odcisk palca SHA256
+openssl x509 -in server.pem -noout -fingerprint -sha256
+
+###########
+sudo openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -aes256 -out /srv/ca/private/cakey.pem
+sudo openssl req -new -x509 -key /srv/ca/private/cakey.pem -out /srv/ca/cacert.pem -days 3650
+
+###########
+# Żądanie certyfikatu (CSR)
+
+openssl req -new -newkey rsa:3072 -nodes -keyout example.com.key -out example.com.csr
+
+# Podpisanie certyfikatu przez CA
+
+openssl ca -in example.com.csr -out example.com.crt
+
+###########
+# Generowanie parametrów DH
+openssl genpkey -genparam -algorithm DH -out dhp.pem
+openssl pkeyparam -in dhp.pem -text
+
+###########
+   openssl verify -CAfile ca_bundle.crt server.crt
+
+###########
+openssl genpkey -algorithm X25519 -out psk.key
+
+###########
+openssl x509 -noout -subject -in /etc/pki/tls/certs/myCert.pem
+openssl x509 -noout -subject -in /etc/pki/tls/certs/CA-chain-2016.pem
+
+###########
+openssl genrsa -des3 -out cert.pkey 2048
+openssl rsa -in cert.pkey -out cert.key
+openssl req -new -key cert.key -out cert.csr
+openssl x509 -req -days 365 -in cert.csr -signkey cert.key -out cert.crt
+
+###########
+# Łączenie certyfikatów
+cat domain.crt intermediate.crt root.crt > chained.crt
+
+# Weryfikacja łańcucha
+openssl verify -CAfile root.crt -untrusted intermediate.crt domain.crt
+
+###########
+openssl s_client -showcerts -connect firma.com:443
+curl -v https://firma.com
+
+###########
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+  -keyout server.key -out server.crt \
+  -subj "/CN=example.com" \
+  -addext "subjectAltName=DNS:example.com,DNS:www.example.com"
+
+###########
+openssl req -new -newkey rsa:3072 -nodes \
+  -keyout example.com.key -out example.com.csr \
+  -subj "/C=PL/ST=Mazovia/L=Warsaw/O=Example Inc/CN=example.com"
+
+###########
+openssl pkcs12 -export -out example.pfx -inkey example.key -in example.pem
+
+###########
+openssl pkcs12 -info -in example.pfx -nodes -nocerts -out example.key
+
+###########
+openssl pkcs12 -info -in example.pfx -nodes -nokeys -out example.pem
+
+###########
+# Szyfrowanie pliku
+openssl enc -aes256 -e -pbkdf2 -in plik.txt -out plik.enc
+# Deszyfrowanie pliku
+openssl enc -aes256 -d -pbkdf2 -in plik.enc -out plik2.txt
+
+###########
+# Obliczenie hasha SHA256 i podpisanie
+openssl dgst -sha256 -sign privkey.pem -out sign.bin test.txt
+
+###########
+# Weryfikacja podpisu
+openssl dgst -sha256 -verify pubkey.pem -signature sign.bin test.txt
+
+###########
+# Generowanie parametrów
+openssl genpkey -genparam -algorithm DH -out dhp.pem
+# Wyświetlenie parametrów
+openssl pkeyparam -in dhp.pem -text
+
+###########
+# Klucz prywatny
+openssl genpkey -paramfile dhp.pem -out dhkey1.pem
+# Klucz publiczny
+openssl pkey -in dhkey1.pem -pubout -out dhpub1.pem
+# Wyświetlenie szczegółów
+openssl pkey -in dhkey1.pem -text -noout
+openssl pkey -pubin -in dhpub1.pem -text
+
+###########
+# Użytkownik 1
+openssl pkeyutl -derive -inkey dhkey1.pem -peerkey dhpub2.pem -out secret1.bin
+# Użytkownik 2
+openssl pkeyutl -derive -inkey dhkey2.pem -peerkey dhpub1.pem -out secret2.bin
+
+###########
+# Test połączenia
+openssl s_client -connect example.com:443 -servername example.com \
+  -showcerts -tlsextdebug < /dev/null
+
+# Sprawdzenie protokołów
+nmap --script ssl-enum-ciphers -p 443 example.com
+
+# Test wydajności
+openssl s_time -connect example.com:443 -www / -new -time 10
+
+###########
+# Wyświetl szczegóły
+openssl x509 -in certificate.crt -text -noout
+
+# Sprawdź daty ważności
+openssl x509 -in certificate.crt -noout -dates
+
+# Wyciągnij klucz publiczny
+openssl x509 -pubkey -noout -in certificate.crt > publickey.pem
+
+###########
+openssl verify -CAfile ./CA-chain.pem -purpose sslclient /etc/postfix/ssl/smtpd.pem
+
+###########
+(openssl x509 -noout -modulus -in /etc/postfix/ssl/smtpd.pem | openssl md5 ;\
+openssl rsa -noout -modulus -in /etc/postfix/ssl/smtpd.key | openssl md5) | uniq
+
+###########
+  # Pobierz certyfikat root CA
+  openssl s_client -showcerts -connect example.com:443 </dev/null | \
+    awk '/BEGIN CERT/,/END CERT/{ if(++n==1) print }' > root.crt
+  
+  # Zaimportuj do zaufanych
+  sudo cp root.crt /usr/local/share/ca-certificates/
+  sudo update-ca-certificates
+
+###########
+openssl s_client -connect example.com:443 -tls1_2
+openssl s_client -connect example.com:443 -tls1_3
+
+###########
+openssl s_client -connect example.com:443 -debug -msg < /dev/null
+
+###########
+#!/bin/bash
+DOMAINS=("example.com" "mail.example.com")
+
+for domain in "${DOMAINS[@]}"; do
+  expiry_date=$(openssl s_client -connect $domain:443 -servername $domain 2>/dev/null | \
+    openssl x509 -noout -enddate | cut -d= -f2)
+  if [ -n "$expiry_date" ]; then
+    remaining_days=$(( ($(date -d "$expiry_date" +%s) - $(date +%s) ) / 86400 ))
+    echo "$domain: $remaining_days dni do wygaśnięcia"
+  else
+    echo "$domain: Błąd połączenia lub certyfikat niedostępny"
+  fi
+done
+
+###########
+   sudo apt update && sudo apt upgrade openssl
+
+###########
+   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out example.com.key
+
+###########
+openssl req -new -newkey rsa:2048 -nodes -keyout server.key -out server.csr \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName = DNS:localhost,IP:127.0.0.1" \
+  -addext "extendedKeyUsage = serverAuth"
+
+# Generowanie certyfikatu przez CA
+docker run -i --rm -v "$(pwd)/ca:/ca" -v "$(pwd):/req" sign csr server
+
+###########
+openssl req -new -newkey rsa:2048 -nodes -keyout client.key -out client.csr \
+  -subj "/CN=client-app" \
+  -addext "extendedKeyUsage = clientAuth"
+
+# Generowanie certyfikatu przez CA
+docker run -i --rm -v "$(pwd)/ca:/ca" -v "$(pwd):/req" sign csr client
+
+###########
+openssl s_client -connect localhost:8443 \
+  -CAfile ca/cacert.pem \
+  -cert client.pem \
+  -key client.key \
+  -status -tlsextdebug
+
+###########
+# Generowanie losowego klucza AES i IV
+openssl rand -out key.bin 32
+openssl rand -out iv.bin 12
+
+# Szyfrowanie pliku AES-GCM
+openssl enc -aes-256-gcm -in parametry.txt -out data.enc -K "$(xxd -p -c 32 key.bin)" -iv "$(xxd -p -c 12 iv.bin)"
+
+# Szyfrowanie klucza i IV za pomocą RSA
+cat iv.bin key.bin > iv_key.bin
+
+openssl pkeyutl -encrypt -pubin -inkey public.pem \
+  -in iv_key.bin -out iv_key.enc \
+  -pkeyopt rsa_padding_mode:oaep \
+  -pkeyopt rsa_oaep_md:sha256 \
+  -pkeyopt rsa_mgf1_md:sha256
+
+# starsza wersja: openssl rsautl -encrypt -inkey public.pem -pubin\
+#        -in iv_key.bin -out iv_key.enc
+
+###########
+# Odszyfrowanie klucza i IV
+openssl rsautl -decrypt -inkey private.pem -in iv_key.enc -out iv_key.bin
+
+# Podział na IV i klucz
+head -c 12 iv_key.bin > iv.bin
+tail -c 32 iv_key.bin > key.bin
+
+# Odszyfrowanie pliku
+openssl pkeyutl -decrypt -inkey private.pem \
+  -in iv_key.enc -out iv_key.bin \
+  -pkeyopt rsa_padding_mode:oaep \
+  -pkeyopt rsa_oaep_md:sha256 \
+  -pkeyopt rsa_mgf1_md:sha256
+  
+#openssl enc -d -aes-256-gcm -in data.enc -out parametry_dec.txt \
+#    -K "$(xxd -p -c 32 key.bin)" -iv "$(xxd -p -c 12 iv.bin)"
+
+###########
+# informacje o certyfikacie w pfx:
+openssl pkcs12 -in $(pwd)/cert.pfx -nodes -passin pass:"<hasło>" | openssl x509 -noout -subject

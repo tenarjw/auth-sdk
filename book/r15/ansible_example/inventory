@@ -1,0 +1,4 @@
+[katalog]
+katalog.example.com ansible_user=admin ansible_ssh_private_key_file=~/.ssh/admin
+[apikatalog]
+apikatalog.example.com ansible_user=admin ansible_ssh_private_key_file=~/.ssh/admin

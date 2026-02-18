@@ -2,11 +2,11 @@
 
 ## Przykłady
 
-index/openssl.txt - przykłady użycia openssl
+openssl.txt - przykłady użycia openssl
 
-docker_xsecure - przykład bezpiecznej wymiany plików
+/docker_xsecure - przykład bezpiecznej wymiany plików
 
-/mtls 
+/mtls - mTLS
 
 ## Linki
 
